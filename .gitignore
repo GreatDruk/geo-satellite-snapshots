@@ -1,0 +1,5 @@
+venv/
+data/raw/
+data/processed/
+data/
+artifacts/
