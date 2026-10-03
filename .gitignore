@@ -1,10 +1,12 @@
 venv/
+.venv/
+__pycache__/
+*.py[cod]
 data/raw/
 data/processed/
 data/
 artifacts/
-__init__.py
-pyproject.toml
+submissions/*.csv
 .pytest_cache/
 .python-version
 comp_2/
