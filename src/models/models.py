@@ -34,7 +34,8 @@ class SimpleCNN(nn.Module):
             nn.BatchNorm1d(256),
             activation,
             nn.Dropout(0.5),
-            nn.Linear(256, num_classes)
+            nn.Linear(256, num_classes),
+            nn.Softmax(dim=1)
         ])
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
