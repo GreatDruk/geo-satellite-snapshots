@@ -1,61 +1,71 @@
-"""Dataset loading utilities."""
-
-import torch
-import torchvision
-
-from torchvision.datasets import ImageFolder
-from torch.urils.data import DataLoader, Dataset
-
-import os
-import numpy as np
+"""Immutable CSV/image datasets; test is loaded only for explicit inference."""
+from pathlib import Path
 import pandas as pd
-import pathlib as Path
-
+import torch
 from PIL import Image
-
+from torch.utils.data import DataLoader, Dataset
 from src.transforms import get_transforms
+from src.utils import seed_worker
 
 
 class ImageDataset(Dataset):
-    """Custom dataset for loading images and labels from a CSV file."""
-
-    def __init__(self, path, transform=None):
-        """
-        Args:
-            path (str): Path to the CSV file containing image paths and labels.
-            transform (callable, optional): Optional transform to be applied on a sample.
-        """
-        self.data = pd.read_csv(path)
+    def __init__(self, csv_path, image_dir, transform=None, label_to_index=None):
+        self.data = pd.read_csv(csv_path, dtype={"id": str})
+        self.image_dir = Path(image_dir)
         self.transform = transform
-        self.len_dataset = len(self.data)
+        self.label_to_index = label_to_index
+        if "id" not in self.data or self.data.empty or self.data.id.isna().any() or self.data.id.duplicated().any():
+            raise ValueError(f"Expected nonempty unique IDs in {csv_path}")
+        if label_to_index is not None:
+            if "label" not in self.data or not self.data.label.isin(label_to_index).all():
+                raise ValueError(f"Missing or unknown labels in {csv_path}")
 
     def __len__(self):
-        return self.len_dataset
+        return len(self.data)
 
     def __getitem__(self, index):
-        image_path = self.data.iloc[index, 0]
-        label = self.data.iloc[index, 1]
-        image = Image.open(image_path).convert('RGB')
-
+        row = self.data.iloc[index]
+        path = (self.image_dir / row["id"]).resolve()
+        if not path.is_relative_to(self.image_dir.resolve()):
+            raise ValueError("Image ID must stay inside its split directory")
+        with Image.open(path) as source:
+            image = source.convert("RGB")
         if self.transform is not None:
             image = self.transform(image)
+        target = self.label_to_index[row["label"]] if self.label_to_index is not None else row["id"]
+        return image, target
 
-        return image, label
+
+def read_classes(data_dir):
+    classes = pd.read_csv(Path(data_dir) / "classes.csv")
+    if not {"label", "class_name"}.issubset(classes.columns):
+        raise ValueError("classes.csv requires label,class_name")
+    if classes.empty or classes.label.isna().any() or classes.label.duplicated().any():
+        raise ValueError("Class labels must be nonempty and unique")
+    return classes
 
 
-def load_data(data_dir: str, batch_size: int = 32):
-    """Load train, validation, test and classes dataframes from CSV files."""
+def make_loader(dataset, config, seed, shuffle=False):
+    return DataLoader(
+        dataset, batch_size=config["batch_size"], shuffle=shuffle,
+        num_workers=config.get("num_workers", 0), pin_memory=config.get("pin_memory", False),
+        worker_init_fn=seed_worker, generator=torch.Generator().manual_seed(seed),
+    )
 
-    train_df: pd.DataFrame = pd.read_csv(data_dir / 'train.csv')
-    val_df: pd.DataFrame = pd.read_csv(data_dir / 'val.csv')
-    test_df: pd.DataFrame = pd.read_csv(data_dir / 'test.csv')
-    classes_df: pd.DataFrame = pd.read_csv(data_dir / 'classes.csv')
 
-    train_transforms, val_transforms = get_transforms()
+def load_data(data_dir, config, seed=42):
+    """Return train, val, classes; do not load test for training."""
+    data_dir = Path(data_dir)
+    classes = read_classes(data_dir)
+    mapping = {label: i for i, label in enumerate(classes.label.tolist())}
+    train_transform, val_transform = get_transforms(config)
+    train = ImageDataset(data_dir / "train.csv", data_dir / "train", train_transform, mapping)
+    val = ImageDataset(data_dir / "val.csv", data_dir / "val", val_transform, mapping)
+    return make_loader(train, config, seed, True), make_loader(val, config, seed), classes
 
-    train_loader = DataLoader(ImageDataset(train_df, transform=train_transforms), batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(ImageDataset(val_df, transform=val_transforms), batch_size=batch_size, shuffle=False)
-    test_loader = DataLoader(ImageDataset(test_df, transform=val_transforms), batch_size=batch_size, shuffle=False)
 
-    return train_loader, val_loader, test_loader, classes_df
-
+def load_test(data_dir, config, seed=42):
+    data_dir = Path(data_dir)
+    _, transform = get_transforms(config)
+    dataset = ImageDataset(data_dir / "test.csv", data_dir / "test", transform)
+    return make_loader(dataset, config, seed)
