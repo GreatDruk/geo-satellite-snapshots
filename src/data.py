@@ -13,6 +13,8 @@ import pathlib as Path
 
 from PIL import Image
 
+from src.transforms import get_transforms
+
 
 class ImageDataset(Dataset):
     """Custom dataset for loading images and labels from a CSV file."""
@@ -49,9 +51,11 @@ def load_data(data_dir: str, batch_size: int = 32):
     test_df: pd.DataFrame = pd.read_csv(data_dir / 'test.csv')
     classes_df: pd.DataFrame = pd.read_csv(data_dir / 'classes.csv')
 
-    train_loader = DataLoader(ImageDataset(train_df), batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(ImageDataset(val_df), batch_size=batch_size, shuffle=False)
-    test_loader = DataLoader(ImageDataset(test_df), batch_size=batch_size, shuffle=False)
+    train_transforms, val_transforms = get_transforms()
+
+    train_loader = DataLoader(ImageDataset(train_df, transform=train_transforms), batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(ImageDataset(val_df, transform=val_transforms), batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(ImageDataset(test_df, transform=val_transforms), batch_size=batch_size, shuffle=False)
 
     return train_loader, val_loader, test_loader, classes_df
 
