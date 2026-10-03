@@ -61,7 +61,7 @@ python -m src.experiment configs/baseline_cnn.json --exp-id cnn_001
 - `data.normalization.mean/std`: фиксированные RGB-значения; код не подбирает статистики на test. По умолчанию это `[0.5, 0.5, 0.5]`.
 - `data.augmentation`: пустой объект отключает аугментации. Поддерживаются `horizontal_flip` и `vertical_flip` с вероятностями 0–1, `rotation_degrees` с максимальным абсолютным углом. Аугментации применяются только к train.
 - `model.layers`: последовательность слоёв. Поддерживаются `conv2d`, `max_pool2d`, `adaptive_avg_pool2d`, `batch_norm2d`, `flatten`, `linear`, `dropout`, `relu`, `leaky_relu`, `gelu`, `silu`, `sigmoid`, `tanh`. Параметры соответствуют PyTorch; размер входа выводится автоматически. Последний слой — `linear` с `out_features: "num_classes"`. Выход — logits, Softmax перед CrossEntropyLoss не нужен.
-- `training`: `epochs`, `log_every` (каждая k-я эпоха; первая и последняя также печатаются), `device` (`auto`, `cpu`, `cuda`), `deterministic`, `optimizer`. Поддерживаются Adam, AdamW, SGD с параметрами PyTorch.
+- `training`: `scheduler` (опционально; `null` отключает), `epochs`, `log_every` (каждая k-я эпоха; первая и последняя также печатаются), `device` (`auto`, `cpu`, `cuda`), `deterministic`, `optimizer`. Поддерживаются Adam, AdamW, SGD с параметрами PyTorch.
 - `notes`: комментарий для журнала.
 
 CNN использует adaptive pooling, поэтому размер входа можно менять без ручного пересчёта Linear. MLP получает размер Flatten из `image_size`.
@@ -70,7 +70,7 @@ CNN использует adaptive pooling, поэтому размер вход�
 
 После успешного опыта автоматически сохраняются:
 
-- `artifacts/models/<exp_id>/best.pt` и `last.pt`: веса, состояние optimizer, конфиг, эпоха и порядок классов. Best выбирается по максимальной val accuracy; при равенстве сохраняется более ранняя эпоха.
+- `artifacts/models/<exp_id>/best.pt` и `last.pt`: веса, состояния optimizer и scheduler, конфиг, эпоха и порядок классов. Best выбирается по максимальной val accuracy; при равенстве сохраняется более ранняя эпоха.
 - `artifacts/logs/<exp_id>/config.json`, `metadata.json`, `history.csv`, `training.log`, `summary.json`, `learning_curves.png`: настройки, окружение, метрики каждой эпохи, сообщения и графики loss/accuracy. В notebook графики также выводятся автоматически.
 - `artifacts/predictions/<exp_id>/val.csv`: ID, предсказанный label и true_label лучшей модели.
 - Одна строка в `experiments.csv`: лучшая val accuracy в диапазоне 0–1, время цикла обучения в минутах, seed и параметры. `public_score` остаётся пустым до получения реального результата Kaggle.
@@ -89,7 +89,7 @@ result = run_experiment("configs/baseline_cnn.json", exp_id="cnn_002", predict_t
 
 Будут дополнительно созданы `artifacts/predictions/cnn_002/test.csv` и `submissions/cnn_002.csv`, с ID в порядке sample submission. Test не участвует в обучении, выборе checkpoint, fitting preprocessing, feature selection, representations или clustering. Отправка в Kaggle вручную.
 
-Обучение, оценка и сохранение не зависят от конкретной архитектуры. Для будущей модели предусмотрен аргумент `model_factory`: функция `(model_config, image_size, num_classes) -> torch.nn.Module`, возвращающая logits формы `[batch, num_classes]`. Та же фабрика нужна при `load_checkpoint`. Pretrained-архитектуры пока не реализованы и веса не скачиваются. Разрешены AlexNet, VGG, DenseNet и Inception; Transformers запрещены. Нормализацию, размер входа, заморозку слоёв и единственный выход logits будущая фабрика/конфиг должны задавать явно.
+Обучение, оценка и сохранение не зависят от конкретной архитектуры. Для будущей модели предусмотрен аргумент `model_factory`: функция `(model_config, image_size, num_classes) -> torch.nn.Module`, возвращающая logits формы `[batch, num_classes]`. Та же фабрика нужна при `load_checkpoint`. Pretrained-архитектуры пока не реализованы и веса не скачиваются. Разрешены AlexNet, VGG, ResNet и Inception; Transformers запрещены. Нормализацию, размер входа, заморозку слоёв и единственный выход logits будущая фабрика/конфиг должны задавать явно.
 
 `findings.md` хранит только известные сведения и накопленные выводы. `99_final_pipeline.ipynb` в будущем должен стать полностью воспроизводимым финальным решением.
 
@@ -100,3 +100,12 @@ python -m unittest discover -s tests -v
 ```
 
 Тесты создают маленькие синтетические датасеты во временной директории и проверяют MLP/CNN, повторяемость seed, checkpoints, журнал, порядок предсказаний, экспорт submission и фабрику модели. Исходные данные и журнал реальных экспериментов не меняются.
+
+
+## Подробное описание конфигов
+
+См. [docs/configuration.md](docs/configuration.md): порядок слоёв, параметры, размеры тензоров и примеры scheduler.
+
+В обоих baseline-конфигах `image_size=256`: изображения подаются в исходном разрешении. `64` тоже допустимо, но означает уменьшение при загрузке и отдельный эксперимент. Исходные файлы никогда не меняются. MLP при 256×256 имеет около 50 млн весов только в первом Linear; уменьшение размера входа уменьшает её стоимость.
+
+`training.scheduler` по умолчанию `null`. Поддерживаются StepLR (`step`), CosineAnnealingLR (`cosine`) и ReduceLROnPlateau (`plateau`). Scheduler обновляется после обучения и validation, задавая LR следующей эпохи. Plateau использует только `val_loss` либо `val_accuracy`. В истории сохраняются `learning_rate` текущей эпохи и `next_learning_rate`; LR печатается в логе и отображается на третьем графике. Состояние scheduler сохраняется в best/last checkpoints.
