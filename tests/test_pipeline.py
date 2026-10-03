@@ -15,6 +15,7 @@ from src.data import ImageDataset, load_data
 from src.experiment import PROJECT_ROOT, load_checkpoint, load_config, run_experiment
 from src.models import build_model
 from src.training.predict import prediction_table, save_submission
+from src.training.schedulers import make_scheduler, step_scheduler
 
 
 class PipelineTest(unittest.TestCase):
@@ -125,7 +126,10 @@ class PipelineTest(unittest.TestCase):
 
     def test_pretrained_policy_and_notebooks(self):
         with self.assertRaises(ValueError):
-            build_model({"name": "resnet", "pretrained": True}, 8, 2)
+            build_model({"name": "densenet", "pretrained": True}, 8, 2)
+        model = build_model({"name": "resnet", "pretrained": True}, 8, 2,
+                            model_factory=lambda config, size, count: torch.nn.Linear(3, count))
+        self.assertIsInstance(model, torch.nn.Module)
         for path in (PROJECT_ROOT / "notebooks").glob("0[12]_baseline_*.ipynb"):
             notebook = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(notebook["nbformat"], 4)
@@ -133,6 +137,44 @@ class PipelineTest(unittest.TestCase):
                 if cell["cell_type"] == "code":
                     compile("".join(cell["source"]), str(path), "exec")
                     self.assertEqual(cell["outputs"], [])
+
+    def test_step_scheduler_history_and_checkpoint_state(self):
+        self.config["training"]["scheduler"] = {"name": "step", "step_size": 1, "gamma": 0.5}
+        result, output = self.run_config(self.config, "step_scheduler")
+        np.testing.assert_allclose(result.history.learning_rate, [0.001, 0.0005, 0.00025])
+        np.testing.assert_allclose(result.history.next_learning_rate, [0.0005, 0.00025, 0.000125])
+        checkpoint = torch.load(result.paths["models"] / "last.pt", weights_only=True)
+        self.assertEqual(checkpoint["scheduler_state_dict"]["last_epoch"], 3)
+        self.assertAlmostEqual(checkpoint["optimizer_state_dict"]["param_groups"][0]["lr"], 0.000125)
+        self.assertIn("lr=", output)
+        optimizer = torch.optim.Adam(result.model.parameters(), lr=0.1)
+        scheduler, _ = make_scheduler(optimizer, self.config["training"]["scheduler"], 3)
+        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+        scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+        optimizer.step()
+        scheduler.step()
+        self.assertAlmostEqual(optimizer.param_groups[0]["lr"], 0.0000625)
+
+    def test_cosine_and_plateau_monitor_direction(self):
+        model = torch.nn.Linear(1, 1)
+        optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+        scheduler, monitor = make_scheduler(optimizer, {"name": "cosine", "eta_min": 0.01}, 2)
+        rates = []
+        for _ in range(2):
+            optimizer.step()
+            step_scheduler(scheduler, monitor, {})
+            rates.append(optimizer.param_groups[0]["lr"])
+        np.testing.assert_allclose(rates, [0.055, 0.01])
+        for metric in ("val_loss", "val_accuracy"):
+            optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+            scheduler, monitor = make_scheduler(optimizer, {"name": "plateau", "monitor": metric,
+                                                           "patience": 0, "factor": 0.5}, 3)
+            for value in ([1.0, 0.8, 0.8] if metric == "val_loss" else [0.5, 0.6, 0.6]):
+                optimizer.step()
+                step_scheduler(scheduler, monitor, {metric: value})
+            self.assertAlmostEqual(optimizer.param_groups[0]["lr"], 0.05)
+        with self.assertRaises(ValueError):
+            make_scheduler(optimizer, {"name": "plateau", "monitor": "val_accuracy", "mode": "min"}, 3)
 
 
 if __name__ == "__main__":

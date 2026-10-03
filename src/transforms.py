@@ -27,7 +27,9 @@ class ImageTransform:
             raise ValueError("rotation_degrees must be nonnegative")
 
     def __call__(self, image):
-        image = image.resize((self.size[1], self.size[0]), Image.Resampling.BILINEAR)
+        target_size = (self.size[1], self.size[0])
+        if image.size != target_size:
+            image = image.resize(target_size, Image.Resampling.BILINEAR)
         for key, operation in (("horizontal_flip", Image.Transpose.FLIP_LEFT_RIGHT),
                                ("vertical_flip", Image.Transpose.FLIP_TOP_BOTTOM)):
             probability = self.augmentation.get(key, 0)

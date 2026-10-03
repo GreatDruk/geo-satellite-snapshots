@@ -18,6 +18,7 @@ from src.data import load_data, load_test
 from src.models import build_model
 from src.training.evaluate import evaluate_model
 from src.training.predict import prediction_table, save_submission
+from src.training.schedulers import make_scheduler, step_scheduler
 from src.training.train import train_model
 from src.utils import append_experiment, get_device, plot_history, set_seed, validate_journal
 
@@ -108,6 +109,7 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
     model = build_model(config["model"], config["data"]["image_size"], len(classes), model_factory).to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = make_optimizer(model, training["optimizer"])
+    scheduler, scheduler_monitor = make_scheduler(optimizer, training.get("scheduler"), epochs)
     # Catch factory/shape errors before creating any run artifacts.
     model.eval()
     height_width = config["data"]["image_size"]
@@ -130,6 +132,7 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
 
     def checkpoint(epoch):
         return {"model_state_dict": model.state_dict(), "optimizer_state_dict": optimizer.state_dict(),
+                "scheduler_state_dict": scheduler.state_dict() if scheduler is not None else None,
                 "epoch": epoch, "best_epoch": best_epoch, "val_accuracy": best_accuracy,
                 "config": config, "class_labels": class_labels,
                 "class_names": classes.class_name.tolist()}
@@ -143,10 +146,14 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
     try:
         for epoch in range(1, epochs + 1):
             epoch_started = time.perf_counter()
+            learning_rate = optimizer.param_groups[0]["lr"]
             train_loss, train_accuracy = train_model(model, train_loader, criterion, optimizer, device)
             val_loss, val_accuracy = evaluate_model(model, val_loader, criterion, device)
+            step_scheduler(scheduler, scheduler_monitor, {"val_loss": val_loss, "val_accuracy": val_accuracy})
             rows.append({"epoch": epoch, "train_loss": train_loss, "train_accuracy": train_accuracy,
                          "val_loss": val_loss, "val_accuracy": val_accuracy,
+                         "learning_rate": learning_rate,
+                         "next_learning_rate": optimizer.param_groups[0]["lr"],
                          "epoch_time_sec": time.perf_counter() - epoch_started})
             pd.DataFrame(rows).to_csv(paths["logs"] / "history.csv", index=False)
             if val_accuracy > best_accuracy:
@@ -155,6 +162,7 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
             if epoch == 1 or epoch % log_every == 0 or epoch == epochs:
                 emit(f"Epoch {epoch}/{epochs} | train loss={train_loss:.4f} acc={train_accuracy:.4f}"
                      f" | val loss={val_loss:.4f} acc={val_accuracy:.4f}"
+                     f" | lr={learning_rate:.3g} -> {optimizer.param_groups[0]['lr']:.3g}"
                      f" | {rows[-1]['epoch_time_sec']:.1f}s")
         elapsed = (time.perf_counter() - started) / 60
         torch.save(checkpoint(epochs), paths["models"] / "last.pt")

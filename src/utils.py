@@ -72,13 +72,19 @@ def append_experiment(path, record):
 
 def plot_history(history, save_path=None, show=True):
     import matplotlib.pyplot as plt
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+    has_lr = "learning_rate" in history
+    columns = 3 if has_lr else 2
+    fig, axes = plt.subplots(1, columns, figsize=(6 * columns, 4))
     for axis, metric, title in zip(axes, ("loss", "accuracy"), ("Loss", "Accuracy")):
         for split in ("train", "val"):
             axis.plot(history["epoch"], history[f"{split}_{metric}"], label=split)
         axis.set(xlabel="Epoch", ylabel=title, title=title)
         axis.grid(alpha=0.3)
         axis.legend()
+    if has_lr:
+        axes[2].plot(history["epoch"], history["learning_rate"])
+        axes[2].set(xlabel="Epoch", ylabel="Learning rate", title="Learning rate")
+        axes[2].grid(alpha=0.3)
     fig.tight_layout()
     if save_path is not None:
         fig.savefig(save_path, dpi=150)
