@@ -1,0 +1,93 @@
+{
+  "seed": 42,
+  "notes": "Higher-resolution regularized MLP; flips only because flatten discards spatial inductive bias; compare as a full recipe, not an isolated augmentation ablation; untested candidate.",
+  "data": {
+    "raw_dir": "data/raw",
+    "image_size": 96,
+    "batch_size": 128,
+    "num_workers": 2,
+    "pin_memory": true,
+    "normalization": {
+      "mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "std": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "augmentation": {
+      "horizontal_flip": 0.5,
+      "vertical_flip": 0.5
+    }
+  },
+  "training": {
+    "epochs": 22,
+    "log_every": 2,
+    "device": "cuda",
+    "deterministic": true,
+    "optimizer": {
+      "name": "adamw",
+      "lr": 0.0003,
+      "weight_decay": 0.02,
+      "betas": [
+        0.9,
+        0.999
+      ]
+    },
+    "scheduler": {
+      "name": "cosine",
+      "T_max": 22,
+      "eta_min": 0.00001
+    }
+  },
+  "model": {
+    "name": "mlp",
+    "pretrained": false,
+    "layers": [
+      {
+        "type": "flatten"
+      },
+      {
+        "type": "linear",
+        "out_features": 384
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "dropout",
+        "p": 0.4
+      },
+      {
+        "type": "linear",
+        "out_features": 192
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "dropout",
+        "p": 0.3
+      },
+      {
+        "type": "linear",
+        "out_features": 96
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "dropout",
+        "p": 0.2
+      },
+      {
+        "type": "linear",
+        "out_features": "num_classes"
+      }
+    ]
+  }
+}

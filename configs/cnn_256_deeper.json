@@ -1,0 +1,199 @@
+{
+  "seed": 42,
+  "notes": "Native-resolution deeper custom CNN, eight convolutions with BatchNorm; 2x2 spatial head and stronger dropout; PIL rotation introduces black corners; untested candidate.",
+  "data": {
+    "raw_dir": "data/raw",
+    "image_size": 256,
+    "batch_size": 32,
+    "num_workers": 2,
+    "pin_memory": true,
+    "normalization": {
+      "mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "std": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "augmentation": {
+      "horizontal_flip": 0.5,
+      "vertical_flip": 0.5,
+      "rotation_degrees": 10
+    }
+  },
+  "training": {
+    "epochs": 60,
+    "log_every": 5,
+    "device": "cuda",
+    "deterministic": true,
+    "optimizer": {
+      "name": "adamw",
+      "lr": 0.0005,
+      "weight_decay": 0.01,
+      "betas": [
+        0.9,
+        0.999
+      ]
+    },
+    "scheduler": {
+      "name": "cosine",
+      "T_max": 60,
+      "eta_min": 5e-06
+    }
+  },
+  "model": {
+    "name": "cnn",
+    "pretrained": false,
+    "layers": [
+      {
+        "type": "conv2d",
+        "out_channels": 32,
+        "kernel_size": 3,
+        "padding": 1,
+        "bias": false
+      },
+      {
+        "type": "batch_norm2d"
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "conv2d",
+        "out_channels": 32,
+        "kernel_size": 3,
+        "padding": 1,
+        "bias": false
+      },
+      {
+        "type": "batch_norm2d"
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "max_pool2d",
+        "kernel_size": 2
+      },
+      {
+        "type": "conv2d",
+        "out_channels": 64,
+        "kernel_size": 3,
+        "padding": 1,
+        "bias": false
+      },
+      {
+        "type": "batch_norm2d"
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "conv2d",
+        "out_channels": 64,
+        "kernel_size": 3,
+        "padding": 1,
+        "bias": false
+      },
+      {
+        "type": "batch_norm2d"
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "max_pool2d",
+        "kernel_size": 2
+      },
+      {
+        "type": "conv2d",
+        "out_channels": 128,
+        "kernel_size": 3,
+        "padding": 1,
+        "bias": false
+      },
+      {
+        "type": "batch_norm2d"
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "conv2d",
+        "out_channels": 128,
+        "kernel_size": 3,
+        "padding": 1,
+        "bias": false
+      },
+      {
+        "type": "batch_norm2d"
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "max_pool2d",
+        "kernel_size": 2
+      },
+      {
+        "type": "conv2d",
+        "out_channels": 256,
+        "kernel_size": 3,
+        "padding": 1,
+        "bias": false
+      },
+      {
+        "type": "batch_norm2d"
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "conv2d",
+        "out_channels": 256,
+        "kernel_size": 3,
+        "padding": 1,
+        "bias": false
+      },
+      {
+        "type": "batch_norm2d"
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "max_pool2d",
+        "kernel_size": 2
+      },
+      {
+        "type": "adaptive_avg_pool2d",
+        "output_size": [
+          2,
+          2
+        ]
+      },
+      {
+        "type": "flatten"
+      },
+      {
+        "type": "linear",
+        "out_features": 256
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "dropout",
+        "p": 0.45
+      },
+      {
+        "type": "linear",
+        "out_features": "num_classes"
+      }
+    ]
+  }
+}

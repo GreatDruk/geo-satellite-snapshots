@@ -1,0 +1,79 @@
+{
+  "seed": 42,
+  "notes": "Fast MLP baseline; 64px to bound dense-layer size; no geometric augmentation to preserve a clean reference; fixed RGB normalization; untested candidate.",
+  "data": {
+    "raw_dir": "data/raw",
+    "image_size": 64,
+    "batch_size": 128,
+    "num_workers": 2,
+    "pin_memory": true,
+    "normalization": {
+      "mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "std": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "augmentation": {}
+  },
+  "training": {
+    "epochs": 16,
+    "log_every": 2,
+    "device": "cuda",
+    "deterministic": true,
+    "optimizer": {
+      "name": "adamw",
+      "lr": 0.0005,
+      "weight_decay": 0.01,
+      "betas": [
+        0.9,
+        0.999
+      ]
+    },
+    "scheduler": {
+      "name": "cosine",
+      "T_max": 16,
+      "eta_min": 0.00001
+    }
+  },
+  "model": {
+    "name": "mlp",
+    "pretrained": false,
+    "layers": [
+      {
+        "type": "flatten"
+      },
+      {
+        "type": "linear",
+        "out_features": 256
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "dropout",
+        "p": 0.35
+      },
+      {
+        "type": "linear",
+        "out_features": 128
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "dropout",
+        "p": 0.25
+      },
+      {
+        "type": "linear",
+        "out_features": "num_classes"
+      }
+    ]
+  }
+}

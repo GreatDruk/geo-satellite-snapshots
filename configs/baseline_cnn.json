@@ -22,8 +22,8 @@
     "augmentation": {}
   },
   "training": {
-    "epochs": 20,
-    "log_every": 2,
+    "epochs": 40,
+    "log_every": 4,
     "device": "auto",
     "deterministic": true,
     "scheduler": null,
