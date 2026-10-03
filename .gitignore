@@ -3,3 +3,9 @@ data/raw/
 data/processed/
 data/
 artifacts/
+__init__.py
+pyproject.toml
+.pytest_cache/
+.python-version
+comp_2/
+uv.*
