@@ -3,7 +3,7 @@
   "notes": "",
   "data": {
     "raw_dir": "data/raw",
-    "image_size": 64,
+    "image_size": 256,
     "batch_size": 64,
     "num_workers": 0,
     "pin_memory": false,
@@ -26,6 +26,7 @@
     "log_every": 2,
     "device": "auto",
     "deterministic": true,
+    "scheduler": null,
     "optimizer": {
       "name": "adam",
       "lr": 0.001,
