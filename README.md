@@ -1,47 +1,102 @@
 # Kaggle Week 5 — Object classification from geo-satellite snapshots
 
-Проект для классификации спутниковых изображений на 20 классов. Метрика соревнования — Accuracy. Предстоит сравнить MLP, CNN и хотя бы одну pretrained-модель.
+Классификация спутниковых изображений на 20 классов; метрика — Accuracy. Train содержит 4999 изображений, val — 699, test — 8299. Ограничения соревнования и накопленные выводы хранятся в `findings.md`.
 
-## Структура репозитория
+## Структура
 
 ```text
 project/
-├── data/
-│   ├── raw/          # Исходные изображения и CSV
-│   └── processed/    # Будущие производные данные
-├── notebooks/
-│   ├── 00_data_overview.ipynb
-│   ├── 01_baseline_mlp.ipynb
-│   ├── 02_baseline_cnn.ipynb
-│   ├── 03_pretrained.ipynb
-│   ├── 04_augmentations.ipynb
-│   ├── 05_error_analysis.ipynb
-│   └── 99_final_pipeline.ipynb
-├── src/              # Будущие модули работы с данными, моделями и запусками
-│   ├── models/ 
-│   │   └── models.py
-│   ├── training/ 
-│   │   ├── evaluate.py
-│   │   ├── predict.py
-│   │   └── train.py
-│   ├── data.py
-│   ├── transforms.py
-│   └── utils.py
-├── configs/          # Будущие конфигурации экспериментов
+├── data/raw/                 # Неизменяемые исходные изображения и CSV
+├── data/processed/           # Производные данные будущих экспериментов
+├── notebooks/                # Запуски и будущий анализ
+├── src/
+│   ├── data.py               # CSV, Dataset, DataLoader; порядок классов из classes.csv
+│   ├── transforms.py         # Resize, фиксированная нормализация, train-аугментации
+│   ├── models/models.py      # Сборка MLP/CNN по списку слоёв
+│   ├── training/train.py     # Одна эпоха обучения
+│   ├── training/evaluate.py  # Validation loss и accuracy
+│   ├── training/predict.py   # Предсказания и экспорт submission
+│   ├── experiment.py         # Полный цикл эксперимента
+│   └── utils.py              # Seed, журнал, графики
+├── configs/
+│   ├── baseline_mlp.json
+│   └── baseline_cnn.json
 ├── artifacts/
-│   ├── models/       # Будущие сохранённые модели
-│   ├── predictions/  # Будущие предсказания
-│   └── logs/         # Будущие логи запусков
-├── submissions/      # Будущие файлы для отправки в Kaggle
-├── experiments.csv
-├── findings.md
+│   ├── models/<exp_id>/
+│   ├── predictions/<exp_id>/
+│   └── logs/<exp_id>/
+├── submissions/
+├── tests/test_pipeline.py    # Проверки на синтетических данных
+├── experiments.csv           # Журнал завершённых запусков
+├── findings.md               # Накопленные выводы
 └── README.md
 ```
 
-`project/` обозначает текущий корень репозитория.
+`project/` — текущий корень репозитория. `data/raw/` не должен модифицироваться.
 
-Содержимое `data/raw/` не должно модифицироваться. Здесь хранятся исходные `train/`, `val/`, `test/`, `train.csv`, `val.csv`, `test.csv`, `classes.csv` и `sample_submission_example.csv`.
+## Запуск
 
-`experiments.csv` используется как журнал запусков, а `findings.md` хранит накопленные выводы и известные ограничения соревнования.
+Откройте `notebooks/01_baseline_mlp.ipynb` или `02_baseline_cnn.ipynb` с Python-ядром, в котором доступны зависимости из `pyproject.toml`. В notebook достаточно импорта, уникального имени эксперимента и пути к конфигу:
 
-`notebooks/99_final_pipeline.ipynb` в будущем должен стать полностью воспроизводимым финальным решением.
+```python
+from src.experiment import run_experiment
+
+result = run_experiment("configs/baseline_cnn.json", exp_id="cnn_001")
+```
+
+В обоих notebooks уже есть короткая ячейка, добавляющая корень проекта в путь импорта. Пути к конфигам и данным вычисляются относительно корня, поэтому запуск из `notebooks/` также работает.
+
+Из терминала в корне:
+
+```bash
+python -m src.experiment configs/baseline_cnn.json --exp-id cnn_001
+```
+
+Конфиги — стартовые настройки, а не результаты или оптимальные гиперпараметры. Для нового опыта скопируйте JSON либо загрузите его через `load_config`, измените словарь и передайте в `run_experiment`. Функция сохраняет фактически использованный конфиг.
+
+## Настройка конфигурации
+
+- `seed` фиксирует Python, NumPy, PyTorch и seed генераторов DataLoader/workers. `training.deterministic=true` включает строгие детерминированные алгоритмы. Повторяемость ожидается в одинаковом программном и аппаратном окружении; неподдерживаемая детерминированная операция завершит запуск ошибкой.
+- `data.image_size`: число для квадратного входа или `[height, width]`. `batch_size`, `num_workers`, `pin_memory` настраивают загрузку. По умолчанию `num_workers=0` удобно для Windows notebooks.
+- `data.normalization.mean/std`: фиксированные RGB-значения; код не подбирает статистики на test. По умолчанию это `[0.5, 0.5, 0.5]`.
+- `data.augmentation`: пустой объект отключает аугментации. Поддерживаются `horizontal_flip` и `vertical_flip` с вероятностями 0–1, `rotation_degrees` с максимальным абсолютным углом. Аугментации применяются только к train.
+- `model.layers`: последовательность слоёв. Поддерживаются `conv2d`, `max_pool2d`, `adaptive_avg_pool2d`, `batch_norm2d`, `flatten`, `linear`, `dropout`, `relu`, `leaky_relu`, `gelu`, `silu`, `sigmoid`, `tanh`. Параметры соответствуют PyTorch; размер входа выводится автоматически. Последний слой — `linear` с `out_features: "num_classes"`. Выход — logits, Softmax перед CrossEntropyLoss не нужен.
+- `training`: `epochs`, `log_every` (каждая k-я эпоха; первая и последняя также печатаются), `device` (`auto`, `cpu`, `cuda`), `deterministic`, `optimizer`. Поддерживаются Adam, AdamW, SGD с параметрами PyTorch.
+- `notes`: комментарий для журнала.
+
+CNN использует adaptive pooling, поэтому размер входа можно менять без ручного пересчёта Linear. MLP получает размер Flatten из `image_size`.
+
+## Результаты запуска
+
+После успешного опыта автоматически сохраняются:
+
+- `artifacts/models/<exp_id>/best.pt` и `last.pt`: веса, состояние optimizer, конфиг, эпоха и порядок классов. Best выбирается по максимальной val accuracy; при равенстве сохраняется более ранняя эпоха.
+- `artifacts/logs/<exp_id>/config.json`, `metadata.json`, `history.csv`, `training.log`, `summary.json`, `learning_curves.png`: настройки, окружение, метрики каждой эпохи, сообщения и графики loss/accuracy. В notebook графики также выводятся автоматически.
+- `artifacts/predictions/<exp_id>/val.csv`: ID, предсказанный label и true_label лучшей модели.
+- Одна строка в `experiments.csv`: лучшая val accuracy в диапазоне 0–1, время цикла обучения в минутах, seed и параметры. `public_score` остаётся пустым до получения реального результата Kaggle.
+
+`result` содержит лучшую модель, DataFrame истории, лучшую эпоху, accuracy и пути. Восстановить сохранённую модель можно через `load_checkpoint` из `src.experiment`. Checkpoints не реализуют точное продолжение прерванного обучения: для этого дополнительно нужны состояния RNG и загрузчиков.
+
+Каждый запуск должен иметь уникальный `exp_id`. Существующий журнал и артефакты не перезаписываются. Запуски с общим журналом выполняйте последовательно. Если запуск прервался, сохранённые метрики/checkpoints и сообщение об ошибке остаются в его директориях; новая строка успешного опыта не добавляется. Следующий запуск получает новый ID.
+
+## Test и будущие модели
+
+По умолчанию test не загружается. Явно включить inference лучшей модели и создание submission можно так:
+
+```python
+result = run_experiment("configs/baseline_cnn.json", exp_id="cnn_002", predict_test=True)
+```
+
+Будут дополнительно созданы `artifacts/predictions/cnn_002/test.csv` и `submissions/cnn_002.csv`, с ID в порядке sample submission. Test не участвует в обучении, выборе checkpoint, fitting preprocessing, feature selection, representations или clustering. Отправка в Kaggle вручную.
+
+Обучение, оценка и сохранение не зависят от конкретной архитектуры. Для будущей модели предусмотрен аргумент `model_factory`: функция `(model_config, image_size, num_classes) -> torch.nn.Module`, возвращающая logits формы `[batch, num_classes]`. Та же фабрика нужна при `load_checkpoint`. Pretrained-архитектуры пока не реализованы и веса не скачиваются. Разрешены AlexNet, VGG, DenseNet и Inception; Transformers запрещены. Нормализацию, размер входа, заморозку слоёв и единственный выход logits будущая фабрика/конфиг должны задавать явно.
+
+`findings.md` хранит только известные сведения и накопленные выводы. `99_final_pipeline.ipynb` в будущем должен стать полностью воспроизводимым финальным решением.
+
+## Проверки
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+Тесты создают маленькие синтетические датасеты во временной директории и проверяют MLP/CNN, повторяемость seed, checkpoints, журнал, порядок предсказаний, экспорт submission и фабрику модели. Исходные данные и журнал реальных экспериментов не меняются.
