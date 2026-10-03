@@ -1,25 +1,22 @@
-"""Model training utilities."""
+"""One epoch for any classifier producing logits."""
+import math
 
-import torch
-import torch.nn as nn
 
-from src.models.models import SimpleCNN
-
-def train_model(
-        model: nn.Module, train_loader: torch.utils.data.DataLoader, 
-        criterion: nn.Module, optimizer: torch.optim.Optimizer, 
-        device: torch.device) -> float:
-    """Train the model for one epoch."""
+def train_model(model, train_loader, criterion, optimizer, device):
     model.train()
-    running_loss = 0.0
-    for inputs, labels in train_loader:
-        inputs, labels = inputs.to(device), labels.to(device)
-
-        optimizer.zero_grad()
-        outputs = model(inputs)
-        loss = criterion(outputs, labels)
+    running_loss, correct, count = 0.0, 0, 0
+    for images, labels in train_loader:
+        images, labels = images.to(device), labels.to(device)
+        optimizer.zero_grad(set_to_none=True)
+        logits = model(images)
+        loss = criterion(logits, labels)
+        if not math.isfinite(loss.item()):
+            raise FloatingPointError("Nonfinite training loss")
         loss.backward()
         optimizer.step()
-
-        running_loss += loss.item() * inputs.size(0)
-    return running_loss / len(train_loader.dataset)
+        count += labels.size(0)
+        running_loss += loss.item() * labels.size(0)
+        correct += (logits.argmax(1) == labels).sum().item()
+    if not count:
+        raise ValueError("Empty training loader")
+    return running_loss / count, correct / count

@@ -1,27 +1,88 @@
-"""Shared utilities for reproducible experiments."""
-
-import numpy as np
+"""Seeds, devices, experiment journal and training plots."""
+import csv
+import os
 import random
+from pathlib import Path
+import numpy as np
 import torch
 
-def set_seed(seed: int = 42) -> None:
-    """Set the random seed for reproducibility."""
+EXPERIMENT_COLUMNS = [
+    "exp_id", "model", "image_size", "augmentation", "pretrained", "val_accuracy",
+    "train_time_min", "seed", "submission_id", "public_score", "notes",
+]
+
+
+def set_seed(seed=42, deterministic=True):
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = deterministic
+    torch.use_deterministic_algorithms(deterministic)
 
-def get_device() -> torch.device:
-    """Get the available device (GPU if available, else CPU)."""
-    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def calculate_accuracy(y_true: torch.Tensor, y_pred: torch.Tensor) -> float:
-    """Calculate the accuracy of predictions."""
-    correct = (y_true == y_pred).sum().item()
-    total = y_true.size(0)
-    return correct / total
+def seed_worker(worker_id):
+    seed = torch.initial_seed() % (2 ** 32)
+    np.random.seed(seed)
+    random.seed(seed)
 
-def get_answers(y_pred: torch.Tensor) -> torch.Tensor:
-    """Get the predicted class labels from model outputs."""
-    return torch.argmax(y_pred, dim=1)
+
+def get_device(name="auto"):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") if name == "auto" else torch.device(name)
+    if device.type == "cuda" and not torch.cuda.is_available():
+        raise ValueError("CUDA requested but unavailable")
+    return device
+
+
+def get_answers(y_pred):
+    return y_pred.argmax(dim=1)
+
+
+def calculate_accuracy(y_true, y_pred):
+    if y_true.numel() == 0:
+        raise ValueError("Empty target")
+    return (y_true == y_pred).float().mean().item()
+
+
+def validate_journal(path, exp_id):
+    path = Path(path)
+    if path.exists():
+        with path.open(newline="", encoding="utf-8-sig") as stream:
+            reader = csv.DictReader(stream)
+            if reader.fieldnames != EXPERIMENT_COLUMNS:
+                raise ValueError("experiments.csv has unexpected headers")
+            if any(row["exp_id"] == exp_id for row in reader):
+                raise FileExistsError(f"Experiment {exp_id} already exists")
+
+
+def append_experiment(path, record):
+    path = Path(path)
+    validate_journal(path, record["exp_id"])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    exists = path.exists()
+    with path.open("a", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(stream, fieldnames=EXPERIMENT_COLUMNS)
+        if not exists:
+            writer.writeheader()
+        writer.writerow(record)
+
+
+def plot_history(history, save_path=None, show=True):
+    import matplotlib.pyplot as plt
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+    for axis, metric, title in zip(axes, ("loss", "accuracy"), ("Loss", "Accuracy")):
+        for split in ("train", "val"):
+            axis.plot(history["epoch"], history[f"{split}_{metric}"], label=split)
+        axis.set(xlabel="Epoch", ylabel=title, title=title)
+        axis.grid(alpha=0.3)
+        axis.legend()
+    fig.tight_layout()
+    if save_path is not None:
+        fig.savefig(save_path, dpi=150)
+    if show:
+        plt.show()
+    plt.close(fig)
+    return fig

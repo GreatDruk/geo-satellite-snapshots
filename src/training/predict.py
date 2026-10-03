@@ -1,18 +1,37 @@
-"""Prediction and submission utilities."""
-
+"""Inference, ordered prediction tables and submission export."""
+from pathlib import Path
+import pandas as pd
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import SequentialSampler
 
-def predict(model: torch.nn.Module, data_loader: DataLoader, device: torch.device) -> torch.Tensor:
-    """Make predictions using the trained model."""
+
+@torch.inference_mode()
+def predict(model, data_loader, device):
     model.eval()
-    predictions = []
+    predictions = [model(images.to(device)).argmax(1).cpu() for images, _ in data_loader]
+    return torch.cat(predictions) if predictions else torch.empty(0, dtype=torch.long)
 
-    with torch.no_grad():
-        for inputs in data_loader:
-            inputs = inputs.to(device)
-            outputs = model(inputs)
-            _, predicted = torch.max(outputs, 1)
-            predictions.extend(predicted.cpu().numpy())
 
-    return torch.tensor(predictions)
+def prediction_table(model, loader, device, class_labels):
+    if not isinstance(loader.sampler, SequentialSampler) or loader.drop_last:
+        raise ValueError("Prediction tables require sequential order and drop_last=false")
+    indices = predict(model, loader, device).tolist()
+    frame = pd.DataFrame({"id": loader.dataset.data["id"].tolist(),
+                          "label": [class_labels[index] for index in indices]})
+    if "label" in loader.dataset.data:
+        frame["true_label"] = loader.dataset.data["label"].tolist()
+    return frame
+
+
+def save_submission(predictions, sample_path, output_path):
+    sample = pd.read_csv(sample_path, dtype={"id": str})
+    if list(sample.columns) != ["id", "label"]:
+        raise ValueError("Expected sample submission columns: id,label")
+    if sample.id.duplicated().any() or predictions.id.duplicated().any() or set(sample.id) != set(predictions.id):
+        raise ValueError("Submission IDs must exactly match sample IDs")
+    output_path = Path(output_path)
+    if output_path.exists():
+        raise FileExistsError(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    predictions.set_index("id").loc[sample.id, ["label"]].reset_index().to_csv(output_path, index=False)
+    return output_path

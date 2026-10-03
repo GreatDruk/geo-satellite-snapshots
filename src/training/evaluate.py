@@ -1,30 +1,21 @@
-"""Model evaluation utilities."""
-
+"""Validation without gradients or parameter updates."""
+import math
 import torch
-import torch.nn as nn
 
-from src.models.models import SimpleCNN
 
-def evaluate_model(
-        model: nn.Module, test_loader: torch.utils.data.DataLoader, 
-        criterion: nn.Module, device: torch.device) -> float:
-    """Evaluate the model on the test dataset."""
+@torch.inference_mode()
+def evaluate_model(model, val_loader, criterion, device):
     model.eval()
-    running_loss = 0.0
-    correct_predictions = 0
-    total_predictions = 0
-
-    with torch.no_grad():
-        for inputs, labels in test_loader:
-            inputs, labels = inputs.to(device), labels.to(device)
-
-            outputs = model(inputs)
-            loss = criterion(outputs, labels)
-            running_loss += loss.item() * inputs.size(0)
-
-            _, predicted = torch.max(outputs, 1)
-            correct_predictions += (predicted == labels).sum().item()
-            total_predictions += labels.size(0)
-
-    accuracy = correct_predictions / total_predictions
-    return running_loss / len(test_loader.dataset), accuracy
+    running_loss, correct, count = 0.0, 0, 0
+    for images, labels in val_loader:
+        images, labels = images.to(device), labels.to(device)
+        logits = model(images)
+        loss = criterion(logits, labels)
+        if not math.isfinite(loss.item()):
+            raise FloatingPointError("Nonfinite validation loss")
+        count += labels.size(0)
+        running_loss += loss.item() * labels.size(0)
+        correct += (logits.argmax(1) == labels).sum().item()
+    if not count:
+        raise ValueError("Empty validation loader")
+    return running_loss / count, correct / count
