@@ -1,0 +1,28 @@
+[project]
+name = "comp-2"
+version = "0.1.0"
+description = "Config-driven satellite image classification experiments"
+readme = "README.md"
+authors = [
+    { name = "Seva Peretiatko", email = "peretyatkosewa06@mail.ru" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+    "pillow",
+    "ipykernel>=7.4.0",
+    "matplotlib>=3.11.2",
+    "pandas>=3.0.6",
+    "torch>=2.14.1",
+]
+
+[project.scripts]
+comp-2 = "src.experiment:main"
+
+[build-system]
+requires = ["uv_build>=0.12.15,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "src"
+module-root = ""
