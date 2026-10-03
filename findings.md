@@ -11,7 +11,7 @@
 - Аугментации и устойчивость к domain shift — важное направление экспериментов.
 - Метрика: Accuracy.
 - Обязательно сравнить MLP, CNN и хотя бы одну pretrained-модель.
-- Разрешённые pretrained-архитектуры: AlexNet, VGG, DenseNet, Inception.
+- Разрешённые pretrained-архитектуры: AlexNet, VGG, ResNet, Inception (исправление ошибки в правилах).
 - Transformers запрещены.
 - Test нельзя использовать для fitting preprocessing, feature selection, representations, clustering или моделей.
 - Финальный pipeline должен быть воспроизводимым.
