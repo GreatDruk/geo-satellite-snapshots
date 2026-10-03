@@ -5,8 +5,8 @@ from torch import nn
 
 def build_model(config, image_size, num_classes, model_factory=None):
     """External factory: (model_config, image_size, num_classes) -> nn.Module."""
-    if config.get("pretrained", False) and config["name"].lower() not in {"alexnet", "vgg", "densenet", "inception"}:
-        raise ValueError("Only pretrained AlexNet, VGG, DenseNet and Inception are permitted")
+    if config.get("pretrained", False) and config["name"].lower() not in {"alexnet", "vgg", "resnet", "inception"}:
+        raise ValueError("Only pretrained AlexNet, VGG, ResNet and Inception are permitted")
     if model_factory is not None:
         model = model_factory(config, image_size, num_classes)
         if not isinstance(model, nn.Module):
