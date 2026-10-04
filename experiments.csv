@@ -1,1 +1,4 @@
 exp_id,model,image_size,augmentation,pretrained,val_accuracy,train_time_min,seed,submission_id,public_score,notes
+mlp_001,mlp,64,{},False,0.2632331902718169,5.247150490000058,42,,,Fast MLP baseline; 64px to bound dense-layer size; no geometric augmentation to preserve a clean reference; fixed RGB normalization; untested candidate.
+mlp_003,mlp,96,"{""horizontal_flip"": 0.5, ""vertical_flip"": 0.5}",False,0.25178826895565093,6.165604261666643,42,,,"Higher-resolution regularized MLP; flips only because flatten discards spatial inductive bias; compare as a full recipe, not an isolated augmentation ablation; untested candidate."
+mlp_004,mlp,256,{},False,0.2646638054363376,21.041113488333213,42,,,"Native-resolution MLP; large dense input regularized with dropout; same no-augmentation protocol as mlp_128_wide, but widths also differ; untested candidate."

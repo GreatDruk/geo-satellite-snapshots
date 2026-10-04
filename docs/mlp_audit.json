@@ -1,0 +1,50 @@
+[
+  {
+    "exp_id": "mlp_001",
+    "device": "cpu",
+    "image_size": 64,
+    "epochs": 16,
+    "best_epoch": 13,
+    "val_correct": 184,
+    "val_total": 699,
+    "val_accuracy": 0.2632331902718169,
+    "last_train_accuracy": 0.3676735347069413,
+    "last_val_accuracy": 0.2632331902718169,
+    "train_time_min": 5.247150490000058,
+    "median_epoch_sec": 21.138185499999963,
+    "checkpoint_predictions_recomputed": true,
+    "checks": "PASS"
+  },
+  {
+    "exp_id": "mlp_003",
+    "device": "cpu",
+    "image_size": 96,
+    "epochs": 22,
+    "best_epoch": 17,
+    "val_correct": 176,
+    "val_total": 699,
+    "val_accuracy": 0.25178826895565093,
+    "last_train_accuracy": 0.2458491698339668,
+    "last_val_accuracy": 0.2503576537911302,
+    "train_time_min": 6.165604261666643,
+    "median_epoch_sec": 13.053444999997737,
+    "checkpoint_predictions_recomputed": true,
+    "checks": "PASS"
+  },
+  {
+    "exp_id": "mlp_004",
+    "device": "cpu",
+    "image_size": 256,
+    "epochs": 40,
+    "best_epoch": 36,
+    "val_correct": 185,
+    "val_total": 699,
+    "val_accuracy": 0.2646638054363376,
+    "last_train_accuracy": 0.4744948989797959,
+    "last_val_accuracy": 0.2589413447782546,
+    "train_time_min": 21.041113488333213,
+    "median_epoch_sec": 30.734210200003872,
+    "checkpoint_predictions_recomputed": true,
+    "checks": "PASS"
+  }
+]
