@@ -124,6 +124,22 @@ class PipelineTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             ImageDataset(self.raw / "train.csv", self.raw / "train", label_to_index={4: 0})
 
+    def test_transfer_run_warmup_journal_groups_and_checkpoint(self):
+        from unittest.mock import patch
+        from test_transfer import TinyResNet
+        self.config["model"] = {"name": "resnet18", "pretrained": True, "weights": "IMAGENET1K_V1",
+                                "mode": "partial", "unfreeze_blocks": ["layer4"], "warmup_epochs": 1}
+        self.config["training"]["optimizer"].update(backbone_lr=0.0001, head_lr=0.001)
+        with patch("src.models.pretrained.load_backbone", return_value=(TinyResNet(), "IMAGENET1K_V1")):
+            result, _ = self.run_config(self.config, "transfer_mock")
+        self.assertEqual(result.history.training_mode.tolist(), ["head_only", "partial", "partial"])
+        self.assertEqual(json.loads(result.history.learning_rates.iloc[0]), {"backbone": 0.0001, "head": 0.001})
+        journal = pd.read_csv(self.root / "experiments.csv")
+        self.assertEqual(journal.model.iloc[0], "resnet18")
+        self.assertTrue(journal.pretrained.iloc[0])
+        saved = torch.load(result.paths["models"] / "last.pt", weights_only=True)
+        self.assertEqual(saved["config"]["model"]["mode"], "partial")
+
     def test_pretrained_policy_and_notebooks(self):
         with self.assertRaises(ValueError):
             build_model({"name": "densenet", "pretrained": True}, 8, 2)
