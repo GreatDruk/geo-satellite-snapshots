@@ -90,7 +90,8 @@ class PipelineTest(unittest.TestCase):
         self.config["data"]["augmentation"] = {"horizontal_flip": 0.5, "rotation_degrees": 10}
         first, _ = self.run_config(self.config, "repeat_a")
         second, _ = self.run_config(self.config, "repeat_b")
-        pd.testing.assert_frame_equal(first.history.drop(columns="epoch_time_sec"), second.history.drop(columns="epoch_time_sec"))
+        timing_columns = ["epoch_time_sec", "train_time_sec", "val_time_sec"]
+        pd.testing.assert_frame_equal(first.history.drop(columns=timing_columns), second.history.drop(columns=timing_columns))
         for key, tensor in first.model.state_dict().items():
             torch.testing.assert_close(tensor, second.model.state_dict()[key], rtol=0, atol=0)
 
@@ -171,6 +172,22 @@ class PipelineTest(unittest.TestCase):
             self.assertFalse(loader.pin_memory)
             self.assertEqual(len(list(loader)), 2)
         self.assertFalse(any("pin_memory" in str(warning.message) for warning in captured))
+
+    def test_worker_options_are_safe_on_cpu_and_valid_with_workers(self):
+        from torch.utils.data import TensorDataset
+        from src.data import make_loader
+        dataset = TensorDataset(torch.zeros(3, 2), torch.zeros(3, dtype=torch.long))
+        config = {"batch_size": 2, "num_workers": 0, "persistent_workers": True, "prefetch_factor": 2}
+        loader = make_loader(dataset, config, 42)
+        self.assertFalse(loader.persistent_workers)
+        self.assertEqual(len(list(loader)), 2)
+        config["num_workers"] = 2
+        loader = make_loader(dataset, config, 42)
+        self.assertTrue(loader.persistent_workers)
+        self.assertEqual(loader.prefetch_factor, 2)
+        config["prefetch_factor"] = 0
+        with self.assertRaises(ValueError):
+            make_loader(dataset, config, 42)
 
     def test_pretrained_policy_and_notebooks(self):
         with self.assertRaises(ValueError):
