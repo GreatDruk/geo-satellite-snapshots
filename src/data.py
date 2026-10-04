@@ -46,9 +46,10 @@ def read_classes(data_dir):
 
 
 def make_loader(dataset, config, seed, shuffle=False):
+    pin_memory = bool(config.get("pin_memory", False) and torch.cuda.is_available())
     return DataLoader(
         dataset, batch_size=config["batch_size"], shuffle=shuffle,
-        num_workers=config.get("num_workers", 0), pin_memory=config.get("pin_memory", False),
+        num_workers=config.get("num_workers", 0), pin_memory=pin_memory,
         worker_init_fn=seed_worker, generator=torch.Generator().manual_seed(seed),
     )
 

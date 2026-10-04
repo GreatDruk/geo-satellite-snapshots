@@ -159,6 +159,19 @@ class PipelineTest(unittest.TestCase):
         with patch("torch.cuda.is_available", return_value=True):
             self.assertEqual(get_device("auto").type, "cuda")
 
+    def test_direct_loader_disables_pinning_without_cuda(self):
+        import warnings
+        from unittest.mock import patch
+        from torch.utils.data import TensorDataset
+        from src.data import make_loader
+        dataset = TensorDataset(torch.zeros(3, 2), torch.zeros(3, dtype=torch.long))
+        with patch("torch.cuda.is_available", return_value=False), warnings.catch_warnings(record=True) as captured:
+            warnings.simplefilter("always")
+            loader = make_loader(dataset, {"batch_size": 2, "pin_memory": True}, 42)
+            self.assertFalse(loader.pin_memory)
+            self.assertEqual(len(list(loader)), 2)
+        self.assertFalse(any("pin_memory" in str(warning.message) for warning in captured))
+
     def test_pretrained_policy_and_notebooks(self):
         with self.assertRaises(ValueError):
             build_model({"name": "densenet", "pretrained": True}, 8, 2)
