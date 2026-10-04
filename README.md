@@ -59,7 +59,7 @@ python -m src.experiment configs/baseline_cnn.json --exp-id cnn_001
 - `seed` фиксирует Python, NumPy, PyTorch и seed генераторов DataLoader/workers. `training.deterministic=true` включает строгие детерминированные алгоритмы. Повторяемость ожидается в одинаковом программном и аппаратном окружении; при deterministic_warn_only=false неподдерживаемая детерминированная операция завершит запуск ошибкой; при true выдаст предупреждение.
 - `data.image_size`: число для квадратного входа или `[height, width]`. `batch_size`, `num_workers`, `pin_memory` настраивают загрузку. По умолчанию `num_workers=0` удобно для Windows notebooks.
 - `data.normalization.mean/std`: фиксированные RGB-значения; код не подбирает статистики на test. По умолчанию это `[0.5, 0.5, 0.5]`.
-- `data.augmentation`: пустой объект отключает аугментации. Поддерживаются `horizontal_flip` и `vertical_flip` с вероятностями 0–1, `rotation_degrees` с максимальным абсолютным углом. Аугментации применяются только к train.
+- `data.augmentation`: пустой объект отключает аугментации. Поддерживаются отражения, повороты, изменения цвета/gamma, шум, blur, JPEG и снижение детализации. Аугментации применяются только к train; описание параметров и сравнимых CNN-конфигов — в [docs/augmentations.md](docs/augmentations.md).
 - `model.layers`: последовательность слоёв. Поддерживаются `conv2d`, `max_pool2d`, `adaptive_avg_pool2d`, `batch_norm2d`, `flatten`, `linear`, `dropout`, `relu`, `leaky_relu`, `gelu`, `silu`, `sigmoid`, `tanh`. Параметры соответствуют PyTorch; размер входа выводится автоматически. Последний слой — `linear` с `out_features: "num_classes"`. Выход — logits, Softmax перед CrossEntropyLoss не нужен.
 - `training`: `scheduler` (опционально; `null` отключает), `epochs`, `log_every` (каждая k-я эпоха; первая и последняя также печатаются), `device` (`auto`, `cpu`, `cuda`), `deterministic`, `optimizer`. Поддерживаются Adam, AdamW, SGD с параметрами PyTorch.
 - `notes`: комментарий для журнала.
@@ -105,6 +105,8 @@ python -m unittest discover -s tests -v
 ## Подробное описание конфигов
 
 См. [docs/configuration.md](docs/configuration.md): порядок слоёв, параметры, размеры тензоров и примеры scheduler.
+
+`02_baseline_cnn.ipynb` остаётся для простого baseline. `04_augmentations.ipynb` содержит выбор одного из четырёх сравнимых CNN-рецептов на 256×256 и просмотр train-аугментаций. Порядок: `cnn_256_no_aug` → `cnn_256_geometry` → `cnn_256_photo` → `cnn_256_domain_shift`. У всех одинаковы архитектура и обучение, меняются только аугментации. CNN 96/128 сохранены в `configs/archive/`.
 
 В обоих baseline-конфигах `image_size=256`: изображения подаются в исходном разрешении. `64` тоже допустимо, но означает уменьшение при загрузке и отдельный эксперимент. Исходные файлы никогда не меняются. MLP при 256×256 имеет около 50 млн весов только в первом Linear; уменьшение размера входа уменьшает её стоимость.
 
