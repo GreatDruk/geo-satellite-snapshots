@@ -75,3 +75,5 @@ AdamW отделяет weight decay от накопления моментов o
 Во всех CNN-конфигах добавлено deterministic_warn_only=true. Код также заменяет AdaptiveAvgPool2d эквивалентным обычным pooling для кратных размеров, чтобы избежать типичного CUDA deterministic backward-сбоя. Seed остаётся фиксированным; warning mode не обещает побитовой повторяемости для неподдерживаемых операторов. Для строгого режима поставьте deterministic_warn_only=false.
 
 На CPU pin_memory автоматически выключается; на Windows также устанавливается num_workers=0. Эти фактические настройки сохраняются в конфиге запуска. При явном device=cuda отсутствие CUDA по-прежнему считается ошибкой; для переносимого запуска используйте auto.
+
+Для будущих CNN/ResNet включены persistent_workers=true и prefetch_factor=2 (при workers>0), неблокирующая передача на CUDA с pinned memory. MLP-конфиги/результаты не менялись. Проверка и ограничения GPU-замеров: [docs/mlp_review.md](../docs/mlp_review.md).

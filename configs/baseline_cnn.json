@@ -5,8 +5,8 @@
     "raw_dir": "data/raw",
     "image_size": 256,
     "batch_size": 64,
-    "num_workers": 0,
-    "pin_memory": false,
+    "num_workers": 2,
+    "pin_memory": true,
     "normalization": {
       "mean": [
         0.5,
@@ -19,7 +19,9 @@
         0.5
       ]
     },
-    "augmentation": {}
+    "augmentation": {},
+    "persistent_workers": true,
+    "prefetch_factor": 2
   },
   "training": {
     "epochs": 40,

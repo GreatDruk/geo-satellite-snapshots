@@ -23,7 +23,9 @@
       "horizontal_flip": 0.5,
       "vertical_flip": 0.5,
       "rotation_degrees": 15
-    }
+    },
+    "persistent_workers": true,
+    "prefetch_factor": 2
   },
   "training": {
     "epochs": 30,
