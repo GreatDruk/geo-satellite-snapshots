@@ -197,12 +197,36 @@ class PipelineTest(unittest.TestCase):
         self.assertIsInstance(model, torch.nn.Module)
         notebook_paths = list((PROJECT_ROOT / "notebooks").glob("0[12]_baseline_*.ipynb"))
         notebook_paths.append(PROJECT_ROOT / "notebooks/03_pretrained.ipynb")
+        notebook_paths.append(PROJECT_ROOT / "notebooks/04_augmentations.ipynb")
         for path in notebook_paths:
             notebook = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(notebook["nbformat"], 4)
             for cell in notebook["cells"]:
                 if cell["cell_type"] == "code":
                     compile("".join(cell["source"]), str(path), "exec")
+
+    def test_augmented_cnn_full_run_without_test_access(self):
+        import hashlib
+        self.config["data"]["augmentation"] = load_config(PROJECT_ROOT / "configs/cnn_256_domain_shift.json")["data"]["augmentation"]
+        self.config["model"] = {"name": "cnn", "pretrained": False, "layers": [
+            {"type": "conv2d", "out_channels": 4, "kernel_size": 3, "padding": 1, "bias": False},
+            {"type": "batch_norm2d"}, {"type": "relu"},
+            {"type": "adaptive_avg_pool2d", "output_size": [1, 1]},
+            {"type": "flatten"}, {"type": "linear", "out_features": "num_classes"}]}
+        (self.raw / "test.csv").unlink()
+        before = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in self.raw.rglob('*') if p.is_file()}
+        result, _ = self.run_config(self.config, "augmented_cnn")
+        after = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in self.raw.rglob('*') if p.is_file()}
+        self.assertEqual(before, after)
+        self.assertEqual(len(result.history), 3)
+        saved = json.loads((result.paths["logs"] / "config.json").read_text())
+        self.assertEqual(saved["data"]["augmentation"], self.config["data"]["augmentation"])
+        journal = pd.read_csv(self.root / "experiments.csv")
+        self.assertEqual(json.loads(journal.augmentation.iloc[0]), self.config["data"]["augmentation"])
+        for file in ("best.pt", "last.pt"):
+            self.assertTrue((result.paths["models"] / file).is_file())
+        self.assertTrue((result.paths["logs"] / "learning_curves.png").is_file())
+        self.assertTrue((result.paths["predictions"] / "val.csv").is_file())
 
     def test_step_scheduler_history_and_checkpoint_state(self):
         self.config["training"]["scheduler"] = {"name": "step", "step_size": 1, "gamma": 0.5}
