@@ -90,3 +90,5 @@ result = run_experiment("configs/resnet18_partial.json", exp_id="resnet18_partia
 Официальные источники: [ResNet](https://docs.pytorch.org/vision/stable/models/resnet.html), [Transfer learning](https://docs.pytorch.org/tutorials/beginner/transfer_learning_tutorial.html).
 
 На CPU pin_memory автоматически выключается; на Windows также устанавливается num_workers=0. Эти фактические настройки сохраняются в конфиге запуска. При явном device=cuda отсутствие CUDA по-прежнему считается ошибкой; для переносимого запуска используйте auto.
+
+Проверка первых завершённых MLP, анализ возможных накладных расходов GPU и настройка загрузчиков для следующих CNN/ResNet: [mlp_review.md](mlp_review.md).

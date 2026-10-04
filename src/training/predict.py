@@ -8,7 +8,8 @@ from torch.utils.data import SequentialSampler
 @torch.inference_mode()
 def predict(model, data_loader, device):
     model.eval()
-    predictions = [model(images.to(device)).argmax(1).cpu() for images, _ in data_loader]
+    non_blocking = device.type == "cuda" and getattr(data_loader, "pin_memory", False)
+    predictions = [model(images.to(device, non_blocking=non_blocking)).argmax(1).cpu() for images, _ in data_loader]
     return torch.cat(predictions) if predictions else torch.empty(0, dtype=torch.long)
 
 

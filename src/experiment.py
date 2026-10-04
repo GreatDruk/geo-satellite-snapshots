@@ -116,6 +116,10 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
         config["data"]["pin_memory"] = False
         if os.name == "nt":
             config["data"]["num_workers"] = 0
+    if config["data"].get("num_workers", 0) == 0:
+        if "persistent_workers" in config["data"]:
+            config["data"]["persistent_workers"] = False
+        config["data"].pop("prefetch_factor", None)
     data_dir = Path(config["data"].get("raw_dir", "data/raw"))
     if not data_dir.is_absolute():
         data_dir = root / data_dir
@@ -146,6 +150,8 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
     except PackageNotFoundError:
         packages["torchvision"] = None
     metadata = {"python": platform.python_version(), "torch": str(torch.__version__),
+                "gpu_name": torch.cuda.get_device_name(device) if device.type == "cuda" else None,
+                "torch_cpu_threads": torch.get_num_threads(),
                 "device": str(device), "cuda": torch.version.cuda,
                 "packages": packages,
                 "seed": config["seed"], "deterministic": training.get("deterministic", True),
@@ -177,8 +183,12 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
                 model.set_epoch(epoch)
             learning_rate = optimizer.param_groups[0]["lr"]
             learning_rates = {group.get("name", str(i)): group["lr"] for i, group in enumerate(optimizer.param_groups)}
+            train_started = time.perf_counter()
             train_loss, train_accuracy = train_model(model, train_loader, criterion, optimizer, device)
+            train_time_sec = time.perf_counter() - train_started
+            val_started = time.perf_counter()
             val_loss, val_accuracy = evaluate_model(model, val_loader, criterion, device)
+            val_time_sec = time.perf_counter() - val_started
             step_scheduler(scheduler, scheduler_monitor, {"val_loss": val_loss, "val_accuracy": val_accuracy})
             rows.append({"epoch": epoch, "train_loss": train_loss, "train_accuracy": train_accuracy,
                          "val_loss": val_loss, "val_accuracy": val_accuracy,
@@ -187,6 +197,8 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
                          "learning_rates": json.dumps(learning_rates),
                          "next_learning_rates": json.dumps({g.get("name", str(i)): g["lr"] for i, g in enumerate(optimizer.param_groups)}),
                          "training_mode": getattr(model, "active_mode", "full"),
+                         "train_time_sec": train_time_sec,
+                         "val_time_sec": val_time_sec,
                          "epoch_time_sec": time.perf_counter() - epoch_started})
             pd.DataFrame(rows).to_csv(paths["logs"] / "history.csv", index=False)
             if val_accuracy > best_accuracy:

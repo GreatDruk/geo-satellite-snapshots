@@ -47,10 +47,20 @@ def read_classes(data_dir):
 
 def make_loader(dataset, config, seed, shuffle=False):
     pin_memory = bool(config.get("pin_memory", False) and torch.cuda.is_available())
+    num_workers = config.get("num_workers", 0)
+    options = {}
+    if num_workers > 0:
+        options["persistent_workers"] = config.get("persistent_workers", False)
+        if "prefetch_factor" in config:
+            prefetch = config["prefetch_factor"]
+            if not isinstance(prefetch, int) or isinstance(prefetch, bool) or prefetch <= 0:
+                raise ValueError("prefetch_factor must be a positive integer")
+            options["prefetch_factor"] = prefetch
     return DataLoader(
         dataset, batch_size=config["batch_size"], shuffle=shuffle,
-        num_workers=config.get("num_workers", 0), pin_memory=pin_memory,
+        num_workers=num_workers, pin_memory=pin_memory,
         worker_init_fn=seed_worker, generator=torch.Generator().manual_seed(seed),
+        **options,
     )
 
 
