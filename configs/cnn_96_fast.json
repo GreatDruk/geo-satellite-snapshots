@@ -27,7 +27,7 @@
   "training": {
     "epochs": 24,
     "log_every": 2,
-    "device": "cuda",
+    "device": "auto",
     "deterministic": true,
     "optimizer": {
       "name": "adamw",

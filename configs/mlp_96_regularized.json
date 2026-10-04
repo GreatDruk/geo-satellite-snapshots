@@ -27,7 +27,7 @@
   "training": {
     "epochs": 22,
     "log_every": 2,
-    "device": "cuda",
+    "device": "auto",
     "deterministic": true,
     "optimizer": {
       "name": "adamw",
@@ -41,7 +41,7 @@
     "scheduler": {
       "name": "cosine",
       "T_max": 22,
-      "eta_min": 0.00001
+      "eta_min": 1e-05
     }
   },
   "model": {
