@@ -56,7 +56,7 @@ python -m src.experiment configs/baseline_cnn.json --exp-id cnn_001
 
 ## Настройка конфигурации
 
-- `seed` фиксирует Python, NumPy, PyTorch и seed генераторов DataLoader/workers. `training.deterministic=true` включает строгие детерминированные алгоритмы. Повторяемость ожидается в одинаковом программном и аппаратном окружении; неподдерживаемая детерминированная операция завершит запуск ошибкой.
+- `seed` фиксирует Python, NumPy, PyTorch и seed генераторов DataLoader/workers. `training.deterministic=true` включает строгие детерминированные алгоритмы. Повторяемость ожидается в одинаковом программном и аппаратном окружении; при deterministic_warn_only=false неподдерживаемая детерминированная операция завершит запуск ошибкой; при true выдаст предупреждение.
 - `data.image_size`: число для квадратного входа или `[height, width]`. `batch_size`, `num_workers`, `pin_memory` настраивают загрузку. По умолчанию `num_workers=0` удобно для Windows notebooks.
 - `data.normalization.mean/std`: фиксированные RGB-значения; код не подбирает статистики на test. По умолчанию это `[0.5, 0.5, 0.5]`.
 - `data.augmentation`: пустой объект отключает аугментации. Поддерживаются `horizontal_flip` и `vertical_flip` с вероятностями 0–1, `rotation_degrees` с максимальным абсолютным углом. Аугментации применяются только к train.
@@ -89,7 +89,7 @@ result = run_experiment("configs/baseline_cnn.json", exp_id="cnn_002", predict_t
 
 Будут дополнительно созданы `artifacts/predictions/cnn_002/test.csv` и `submissions/cnn_002.csv`, с ID в порядке sample submission. Test не участвует в обучении, выборе checkpoint, fitting preprocessing, feature selection, representations или clustering. Отправка в Kaggle вручную.
 
-Обучение, оценка и сохранение не зависят от конкретной архитектуры. Для будущей модели предусмотрен аргумент `model_factory`: функция `(model_config, image_size, num_classes) -> torch.nn.Module`, возвращающая logits формы `[batch, num_classes]`. Та же фабрика нужна при `load_checkpoint`. Pretrained-архитектуры пока не реализованы и веса не скачиваются. Разрешены AlexNet, VGG, ResNet и Inception; Transformers запрещены. Нормализацию, размер входа, заморозку слоёв и единственный выход logits будущая фабрика/конфиг должны задавать явно.
+Обучение, оценка и сохранение не зависят от конкретной архитектуры. Для будущей модели предусмотрен аргумент `model_factory`: функция `(model_config, image_size, num_classes) -> torch.nn.Module`, возвращающая logits формы `[batch, num_classes]`. Та же фабрика нужна при `load_checkpoint`. Встроены torchvision ResNet18/34/50/101/152 и режимы transfer learning; подробности в docs/transfer_learning.md. Разрешены AlexNet, VGG, ResNet и Inception; Transformers запрещены. Нормализацию, размер входа, заморозку слоёв и единственный выход logits будущая фабрика/конфиг должны задавать явно.
 
 `findings.md` хранит только известные сведения и накопленные выводы. `99_final_pipeline.ipynb` в будущем должен стать полностью воспроизводимым финальным решением.
 
@@ -109,3 +109,6 @@ python -m unittest discover -s tests -v
 В обоих baseline-конфигах `image_size=256`: изображения подаются в исходном разрешении. `64` тоже допустимо, но означает уменьшение при загрузке и отдельный эксперимент. Исходные файлы никогда не меняются. MLP при 256×256 имеет около 50 млн весов только в первом Linear; уменьшение размера входа уменьшает её стоимость.
 
 `training.scheduler` по умолчанию `null`. Поддерживаются StepLR (`step`), CosineAnnealingLR (`cosine`) и ReduceLROnPlateau (`plateau`). Scheduler обновляется после обучения и validation, задавая LR следующей эпохи. Plateau использует только `val_loss` либо `val_accuracy`. В истории сохраняются `learning_rate` текущей эпохи и `next_learning_rate`; LR печатается в логе и отображается на третьем графике. Состояние scheduler сохраняется в best/last checkpoints.
+
+
+Поддержка встроенных ResNet и исправление deterministic для CUDA описаны в [docs/transfer_learning.md](docs/transfer_learning.md).
