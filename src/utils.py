@@ -1,5 +1,6 @@
 """Seeds, devices, experiment journal and training plots."""
 import csv
+import json
 import os
 import random
 from pathlib import Path
@@ -12,7 +13,7 @@ EXPERIMENT_COLUMNS = [
 ]
 
 
-def set_seed(seed=42, deterministic=True):
+def set_seed(seed=42, deterministic=True, warn_only=False):
     os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
     random.seed(seed)
     np.random.seed(seed)
@@ -21,7 +22,7 @@ def set_seed(seed=42, deterministic=True):
         torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = deterministic
-    torch.use_deterministic_algorithms(deterministic)
+    torch.use_deterministic_algorithms(deterministic, warn_only=warn_only)
 
 
 def seed_worker(worker_id):
@@ -82,7 +83,13 @@ def plot_history(history, save_path=None, show=True):
         axis.grid(alpha=0.3)
         axis.legend()
     if has_lr:
-        axes[2].plot(history["epoch"], history["learning_rate"])
+        if "learning_rates" in history:
+            rates = [json.loads(value) for value in history["learning_rates"]]
+            for name in rates[0]:
+                axes[2].plot(history["epoch"], [row[name] for row in rates], label=name)
+            axes[2].legend()
+        else:
+            axes[2].plot(history["epoch"], history["learning_rate"])
         axes[2].set(xlabel="Epoch", ylabel="Learning rate", title="Learning rate")
         axes[2].grid(alpha=0.3)
     fig.tight_layout()
