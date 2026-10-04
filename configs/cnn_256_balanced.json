@@ -1,6 +1,6 @@
 {
   "seed": 42,
-  "notes": "Preferred native-resolution custom CNN starting point, six convolutions with BatchNorm; modest flips, 4x4 spatial head; untested candidate.",
+  "notes": "256px six-convolution CNN; same recipe as cnn_256_geometry; use matched study configurations for augmentation comparisons.",
   "data": {
     "raw_dir": "data/raw",
     "image_size": 256,
@@ -21,7 +21,8 @@
     },
     "augmentation": {
       "horizontal_flip": 0.5,
-      "vertical_flip": 0.5
+      "vertical_flip": 0.5,
+      "random_rotate90": 1.0
     },
     "persistent_workers": true,
     "prefetch_factor": 2

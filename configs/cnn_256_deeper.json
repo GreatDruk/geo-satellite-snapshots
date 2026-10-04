@@ -1,6 +1,6 @@
 {
   "seed": 42,
-  "notes": "Native-resolution deeper custom CNN, eight convolutions with BatchNorm; 2x2 spatial head and stronger dropout; PIL rotation introduces black corners; untested candidate.",
+  "notes": "256px eight-convolution CNN with geometric augmentation; architecture alternative, not a matched augmentation control; untested candidate.",
   "data": {
     "raw_dir": "data/raw",
     "image_size": 256,
@@ -22,7 +22,7 @@
     "augmentation": {
       "horizontal_flip": 0.5,
       "vertical_flip": 0.5,
-      "rotation_degrees": 10
+      "random_rotate90": 1.0
     },
     "persistent_workers": true,
     "prefetch_factor": 2
