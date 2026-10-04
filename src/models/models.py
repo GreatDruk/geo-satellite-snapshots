@@ -1,17 +1,23 @@
 """Config-driven custom MLP/CNN producing raw logits."""
 from math import prod
 from torch import nn
+from .pooling import CompatibleAdaptiveAvgPool2d
+from .pretrained import RESNET_ARCHITECTURES, build_pretrained
 
 
-def build_model(config, image_size, num_classes, model_factory=None):
+def build_model(config, image_size, num_classes, model_factory=None, *, initialize_pretrained=True):
     """External factory: (model_config, image_size, num_classes) -> nn.Module."""
-    if config.get("pretrained", False) and config["name"].lower() not in {"alexnet", "vgg", "resnet", "inception"}:
+    architecture = config.get("architecture", config["name"]).lower()
+    allowed = {"alexnet", "vgg", "resnet", "inception"} | RESNET_ARCHITECTURES
+    if config.get("pretrained", False) and architecture not in allowed:
         raise ValueError("Only pretrained AlexNet, VGG, ResNet and Inception are permitted")
     if model_factory is not None:
         model = model_factory(config, image_size, num_classes)
         if not isinstance(model, nn.Module):
             raise TypeError("model_factory must return nn.Module producing class logits")
         return model
+    if architecture in RESNET_ARCHITECTURES or architecture == "resnet":
+        return build_pretrained(config, num_classes, initialize_pretrained)
     if config.get("pretrained", False) or config["name"] not in {"mlp", "cnn"}:
         raise ValueError("Built-in models: mlp/cnn. Others require model_factory")
     size = (image_size, image_size) if isinstance(image_size, int) else tuple(image_size)
@@ -52,7 +58,7 @@ def build_model(config, image_size, num_classes, model_factory=None):
         elif kind == "adaptive_avg_pool2d":
             if len(shape) != 3:
                 raise ValueError("adaptive_avg_pool2d needs spatial input")
-            layer = nn.AdaptiveAvgPool2d(**options)
+            layer = CompatibleAdaptiveAvgPool2d(**options)
             output = pair(layer.output_size)
             shape = (shape[0], *(shape[i + 1] if output[i] is None else output[i] for i in range(2)))
         elif kind == "batch_norm2d":
