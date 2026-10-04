@@ -7,7 +7,7 @@ import platform
 import re
 import time
 from dataclasses import dataclass
-from importlib.metadata import version
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 import pandas as pd
@@ -51,7 +51,15 @@ def make_optimizer(model, config):
     constructors = {"adam": torch.optim.Adam, "adamw": torch.optim.AdamW, "sgd": torch.optim.SGD}
     if name not in constructors:
         raise ValueError(f"Unknown optimizer: {name}")
-    return constructors[name](model.parameters(), **options)
+    backbone_lr = options.pop("backbone_lr", None)
+    head_lr = options.pop("head_lr", None)
+    if hasattr(model, "optimizer_groups"):
+        parameters = model.optimizer_groups(options.get("lr", 0.001), backbone_lr, head_lr)
+    else:
+        if backbone_lr is not None or head_lr is not None:
+            raise ValueError("backbone_lr/head_lr require a transfer model")
+        parameters = [parameter for parameter in model.parameters() if parameter.requires_grad]
+    return constructors[name](parameters, **options)
 
 
 def load_checkpoint(checkpoint_path, device="auto", model_factory=None):
@@ -60,8 +68,10 @@ def load_checkpoint(checkpoint_path, device="auto", model_factory=None):
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
     config = checkpoint["config"]
     model = build_model(config["model"], config["data"]["image_size"],
-                        len(checkpoint["class_labels"]), model_factory)
+                        len(checkpoint["class_labels"]), model_factory, initialize_pretrained=False)
     model.load_state_dict(checkpoint["model_state_dict"])
+    if hasattr(model, "set_epoch"):
+        model.set_epoch(checkpoint["epoch"])
     model.to(device).eval()
     return model, checkpoint
 
@@ -99,7 +109,7 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
     submission = root / "submissions" / f"{exp_id}.csv"
     if predict_test and submission.exists():
         raise FileExistsError(submission)
-    set_seed(config["seed"], training.get("deterministic", True))
+    set_seed(config["seed"], training.get("deterministic", True), training.get("deterministic_warn_only", False))
     device = get_device(training.get("device", "auto"))
     data_dir = Path(config["data"].get("raw_dir", "data/raw"))
     if not data_dir.is_absolute():
@@ -107,6 +117,10 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
     train_loader, val_loader, classes = load_data(data_dir, config["data"], config["seed"])
     class_labels = classes.label.tolist()
     model = build_model(config["model"], config["data"]["image_size"], len(classes), model_factory).to(device)
+    if config["model"].get("warmup_epochs", 0) >= epochs:
+        raise ValueError("warmup_epochs must be smaller than training.epochs")
+    if hasattr(model, "weights_name") and config["model"].get("pretrained", False):
+        config["model"]["weights"] = model.weights_name
     criterion = nn.CrossEntropyLoss()
     optimizer = make_optimizer(model, training["optimizer"])
     scheduler, scheduler_monitor = make_scheduler(optimizer, training.get("scheduler"), epochs)
@@ -121,10 +135,18 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
     for path in paths.values():
         path.mkdir(parents=True, exist_ok=False)
     (paths["logs"] / "config.json").write_text(json.dumps(config, indent=2, ensure_ascii=False), encoding="utf-8")
+    packages = {name: version(name) for name in ("numpy", "pandas", "pillow", "matplotlib")}
+    try:
+        packages["torchvision"] = version("torchvision")
+    except PackageNotFoundError:
+        packages["torchvision"] = None
     metadata = {"python": platform.python_version(), "torch": str(torch.__version__),
                 "device": str(device), "cuda": torch.version.cuda,
-                "packages": {name: version(name) for name in ("numpy", "pandas", "pillow", "matplotlib")},
+                "packages": packages,
                 "seed": config["seed"], "deterministic": training.get("deterministic", True),
+                "deterministic_warn_only": training.get("deterministic_warn_only", False),
+                "parameters": sum(p.numel() for p in model.parameters()),
+                "trainable_parameters": sum(p.numel() for p in model.parameters() if p.requires_grad),
                 "class_labels": class_labels, "class_names": classes.class_name.tolist()}
     (paths["logs"] / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     rows, best_accuracy, best_epoch = [], -1.0, 0
@@ -146,7 +168,10 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
     try:
         for epoch in range(1, epochs + 1):
             epoch_started = time.perf_counter()
+            if hasattr(model, "set_epoch"):
+                model.set_epoch(epoch)
             learning_rate = optimizer.param_groups[0]["lr"]
+            learning_rates = {group.get("name", str(i)): group["lr"] for i, group in enumerate(optimizer.param_groups)}
             train_loss, train_accuracy = train_model(model, train_loader, criterion, optimizer, device)
             val_loss, val_accuracy = evaluate_model(model, val_loader, criterion, device)
             step_scheduler(scheduler, scheduler_monitor, {"val_loss": val_loss, "val_accuracy": val_accuracy})
@@ -154,6 +179,9 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
                          "val_loss": val_loss, "val_accuracy": val_accuracy,
                          "learning_rate": learning_rate,
                          "next_learning_rate": optimizer.param_groups[0]["lr"],
+                         "learning_rates": json.dumps(learning_rates),
+                         "next_learning_rates": json.dumps({g.get("name", str(i)): g["lr"] for i, g in enumerate(optimizer.param_groups)}),
+                         "training_mode": getattr(model, "active_mode", "full"),
                          "epoch_time_sec": time.perf_counter() - epoch_started})
             pd.DataFrame(rows).to_csv(paths["logs"] / "history.csv", index=False)
             if val_accuracy > best_accuracy:
@@ -162,7 +190,7 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
             if epoch == 1 or epoch % log_every == 0 or epoch == epochs:
                 emit(f"Epoch {epoch}/{epochs} | train loss={train_loss:.4f} acc={train_accuracy:.4f}"
                      f" | val loss={val_loss:.4f} acc={val_accuracy:.4f}"
-                     f" | lr={learning_rate:.3g} -> {optimizer.param_groups[0]['lr']:.3g}"
+                     f" | lr={learning_rates} | mode={getattr(model, 'active_mode', 'full')}"
                      f" | {rows[-1]['epoch_time_sec']:.1f}s")
         elapsed = (time.perf_counter() - started) / 60
         torch.save(checkpoint(epochs), paths["models"] / "last.pt")
