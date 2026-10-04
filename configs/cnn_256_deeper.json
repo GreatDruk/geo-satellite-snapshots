@@ -43,7 +43,8 @@
       "name": "cosine",
       "T_max": 60,
       "eta_min": 5e-06
-    }
+    },
+    "deterministic_warn_only": true
   },
   "model": {
     "name": "cnn",

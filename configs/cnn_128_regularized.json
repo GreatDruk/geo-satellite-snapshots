@@ -42,8 +42,9 @@
     "scheduler": {
       "name": "cosine",
       "T_max": 30,
-      "eta_min": 0.00001
-    }
+      "eta_min": 1e-05
+    },
+    "deterministic_warn_only": true
   },
   "model": {
     "name": "cnn",
