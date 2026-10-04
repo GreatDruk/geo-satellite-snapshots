@@ -3,6 +3,7 @@
 import argparse
 import copy
 import json
+import os
 import platform
 import re
 import time
@@ -111,6 +112,10 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
         raise FileExistsError(submission)
     set_seed(config["seed"], training.get("deterministic", True), training.get("deterministic_warn_only", False))
     device = get_device(training.get("device", "auto"))
+    if device.type == "cpu":
+        config["data"]["pin_memory"] = False
+        if os.name == "nt":
+            config["data"]["num_workers"] = 0
     data_dir = Path(config["data"].get("raw_dir", "data/raw"))
     if not data_dir.is_absolute():
         data_dir = root / data_dir
