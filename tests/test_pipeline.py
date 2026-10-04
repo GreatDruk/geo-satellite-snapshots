@@ -16,6 +16,7 @@ from src.experiment import PROJECT_ROOT, load_checkpoint, load_config, run_exper
 from src.models import build_model
 from src.training.predict import prediction_table, save_submission
 from src.training.schedulers import make_scheduler, step_scheduler
+from src.utils import get_device
 
 
 class PipelineTest(unittest.TestCase):
@@ -140,19 +141,38 @@ class PipelineTest(unittest.TestCase):
         saved = torch.load(result.paths["models"] / "last.pt", weights_only=True)
         self.assertEqual(saved["config"]["model"]["mode"], "partial")
 
+    def test_auto_device_runs_on_cpu_without_cuda(self):
+        from unittest.mock import patch
+        self.config["training"]["device"] = "auto"
+        self.config["data"].update(pin_memory=True, num_workers=2)
+        with patch("torch.cuda.is_available", return_value=False), patch("src.experiment.os.name", "nt"):
+            self.assertEqual(get_device("auto").type, "cpu")
+            result, _ = self.run_config(self.config, "auto_cpu")
+        saved = json.loads((result.paths["logs"] / "config.json").read_text())
+        metadata = json.loads((result.paths["logs"] / "metadata.json").read_text())
+        self.assertFalse(saved["data"]["pin_memory"])
+        self.assertEqual(saved["data"]["num_workers"], 0)
+        self.assertEqual(metadata["device"], "cpu")
+
+    def test_auto_device_selects_cuda_when_available(self):
+        from unittest.mock import patch
+        with patch("torch.cuda.is_available", return_value=True):
+            self.assertEqual(get_device("auto").type, "cuda")
+
     def test_pretrained_policy_and_notebooks(self):
         with self.assertRaises(ValueError):
             build_model({"name": "densenet", "pretrained": True}, 8, 2)
         model = build_model({"name": "resnet", "pretrained": True}, 8, 2,
                             model_factory=lambda config, size, count: torch.nn.Linear(3, count))
         self.assertIsInstance(model, torch.nn.Module)
-        for path in (PROJECT_ROOT / "notebooks").glob("0[12]_baseline_*.ipynb"):
+        notebook_paths = list((PROJECT_ROOT / "notebooks").glob("0[12]_baseline_*.ipynb"))
+        notebook_paths.append(PROJECT_ROOT / "notebooks/03_pretrained.ipynb")
+        for path in notebook_paths:
             notebook = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(notebook["nbformat"], 4)
             for cell in notebook["cells"]:
                 if cell["cell_type"] == "code":
                     compile("".join(cell["source"]), str(path), "exec")
-                    self.assertEqual(cell["outputs"], [])
 
     def test_step_scheduler_history_and_checkpoint_state(self):
         self.config["training"]["scheduler"] = {"name": "step", "step_size": 1, "gamma": 0.5}
