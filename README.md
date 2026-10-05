@@ -91,7 +91,7 @@ result = run_experiment("configs/baseline_cnn.json", exp_id="cnn_002", predict_t
 
 Обучение, оценка и сохранение не зависят от конкретной архитектуры. Для будущей модели предусмотрен аргумент `model_factory`: функция `(model_config, image_size, num_classes) -> torch.nn.Module`, возвращающая logits формы `[batch, num_classes]`. Та же фабрика нужна при `load_checkpoint`. Встроены torchvision ResNet18/34/50/101/152 и режимы transfer learning; подробности в docs/transfer_learning.md. Разрешены AlexNet, VGG, ResNet и Inception; Transformers запрещены. Нормализацию, размер входа, заморозку слоёв и единственный выход logits будущая фабрика/конфиг должны задавать явно.
 
-`findings.md` хранит только известные сведения и накопленные выводы. `99_final_pipeline.ipynb` в будущем должен стать полностью воспроизводимым финальным решением.
+`findings.md` хранит только известные сведения и накопленные выводы. `99_final_pipeline.ipynb` воспроизводит выбранный на val manifest из сохранённых checkpoints; test inference включается явно после выбора решения.
 
 ## Проверки
 
@@ -114,3 +114,5 @@ python -m unittest discover -s tests -v
 
 
 Поддержка встроенных ResNet и исправление deterministic для CUDA описаны в [docs/transfer_learning.md](docs/transfer_learning.md).
+
+Следующий новый Kaggle-запуск: `configs/resnet101_partial_domain_shift_stronger.json`, уже выбранный в `03_pretrained.ipynb`. Новые обучения сохраняют также вероятности в NPZ с IDs и порядком классов. Для старых checkpoints переобучение не требуется: `src/inference.py` выполняет TTA (none/flips/D4) и равновесные soft ensembles на val. Результаты, hashes и выбранный manifest сохраняются в отдельных inference-артефактах; `experiments.csv` остаётся журналом обучений. В конце `05_error_analysis.ipynb` есть сравнение и галерея ошибок выбранного рецепта. См. [docs/inference.md](docs/inference.md).
