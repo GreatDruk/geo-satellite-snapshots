@@ -1,5 +1,6 @@
 """Torchvision ResNets with explicit transfer-learning and BatchNorm policies."""
 from torch import nn
+from torch.nn import functional as F
 
 from .pooling import replace_adaptive_pools, GlobalAverageMaxPool2d
 
@@ -27,6 +28,11 @@ class TransferClassifier(nn.Module):
     def __init__(self, backbone, config, architecture):
         super().__init__()
         self.backbone = backbone
+        auxiliary = config.get("auxiliary_cosine_head", False)
+        if not isinstance(auxiliary, bool):
+            raise ValueError("auxiliary_cosine_head must be boolean")
+        if auxiliary:
+            self.auxiliary_head = nn.Linear(backbone.fc[1].in_features, backbone.fc[1].out_features, bias=False)
         self.architecture = architecture
         self.mode = config.get("mode", "full")
         self.freeze_bn = config.get("freeze_bn", False)
@@ -75,11 +81,27 @@ class TransferClassifier(nn.Module):
         groups = []
         if body:
             groups.append({"params": body, "lr": base_lr if backbone_lr is None else backbone_lr, "name": "backbone"})
+        if hasattr(self, "auxiliary_head"):
+            head.extend(self.auxiliary_head.parameters())
         groups.append({"params": head, "lr": base_lr if head_lr is None else head_lr, "name": "head"})
         return groups
 
     def forward(self, images):
         return self.backbone(images)
+
+    def forward_with_auxiliary(self, images):
+        """One ResNet pass, ordinary logits plus normalized auxiliary similarities."""
+        if not hasattr(self, "auxiliary_head"):
+            raise ValueError("ce_cosface requires model.auxiliary_cosine_head=true")
+        body = self.backbone
+        features = body.bn1(body.conv1(images))
+        features = getattr(body, "relu", nn.Identity())(features)
+        features = getattr(body, "maxpool", nn.Identity())(features)
+        for block in (body.layer1, body.layer2, body.layer3, body.layer4):
+            features = block(features)
+        features = body.avgpool(features).flatten(1)
+        cosine = F.linear(F.normalize(features, dim=1), F.normalize(self.auxiliary_head.weight, dim=1))
+        return body.fc(features), cosine
 
 
 def build_pretrained(config, num_classes, initialize_pretrained=True):
