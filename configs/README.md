@@ -41,7 +41,9 @@ MLP 64/96/128/256 оставлены без изменений. Закончен
 
 Запуск через существующий `03_pretrained.ipynb`: укажите путь к новому конфигу и **новый EXP_ID**. Например `CONFIG="configs/resnet50_partial_domain_shift.json"`, `EXP_ID="resnet50_partial_domain_shift_s42_001"`. Старый default ID в notebook уже использован, его нужно заменить. Pipeline сохранит графики, checkpoints и строку журнала.
 
-После выбора перспективных вариантов повторите контроль и кандидата с seeds123/2026: `config["seed"] = 123` после `load_config`, отдельный EXP_ID на каждый seed. Не меняйте параллельно другие параметры. Фотоискажения применяются только к train, val остаётся исходной; диапазоны проверяются по train/val, не подбираются по test. Сильнее не обязательно лучше.
+Повторы с другими seeds исключены по решению пользователя. Следующее обучение — `resnet101_partial_domain_shift_stronger.json`: меняется только архитектура относительно stronger ResNet50; seed=42, 256×256, partial layer3/layer4, warmup=3, 25 эпох и остальные настройки прежние. Конфигурация выбрана в `03_pretrained.ipynb`; используйте уникальный EXP_ID. Фотоискажения применяются только к train, val остаётся исходной; диапазоны проверяются по train/val, не подбираются по test.
+
+TTA/равновесный ансамбль сохранённых моделей выполняются в `05_error_analysis.ipynb` без обучения. Probability NPZ теперь сохраняется и обычным training pipeline. `99_final_pipeline.ipynb` воспроизводит выбранный на val manifest; test inference выключен по умолчанию. Подробности: [../docs/inference.md](../docs/inference.md).
 
 Full оставляет `freeze_bn=true` для сравнения с partial: running mean/variance заморожены, но разрешённые к обучению BN affine-параметры получают gradients. Предыдущий ResNet18 full имел `freeze_bn=false` и другие LR/epochs, поэтому это иной протокол.
 
