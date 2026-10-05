@@ -1,0 +1,1173 @@
+{
+  "run": "resnet101_partial_avgmax_domain_shift_001",
+  "checks": {
+    "epochs_complete": 12,
+    "best_epoch": 8,
+    "journal_csv_npz_agree": true,
+    "source_sha256_matches": true,
+    "config_matches": true,
+    "new_weights_present": false
+  },
+  "comparison": [
+    {
+      "recipe": "avgmax",
+      "correct": 671,
+      "errors": 28,
+      "accuracy": 0.9599427753934192,
+      "nll": 0.24423620104789734,
+      "fixes_vs_101": 3,
+      "breaks_vs_101": 10
+    },
+    {
+      "recipe": "resnet101",
+      "correct": 678,
+      "errors": 21,
+      "accuracy": 0.9699570815450643,
+      "nll": 0.16326124966144562,
+      "fixes_vs_101": 0,
+      "breaks_vs_101": 0
+    },
+    {
+      "recipe": "stronger50",
+      "correct": 675,
+      "errors": 24,
+      "accuracy": 0.9656652360515021,
+      "nll": 0.18411193788051605,
+      "fixes_vs_101": 9,
+      "breaks_vs_101": 12
+    },
+    {
+      "recipe": "current_ensemble",
+      "correct": 679,
+      "errors": 20,
+      "accuracy": 0.9713876967095851,
+      "nll": 0.13227473199367523,
+      "fixes_vs_101": 5,
+      "breaks_vs_101": 4
+    },
+    {
+      "recipe": "avgmax_plus_resnet101",
+      "correct": 674,
+      "errors": 25,
+      "accuracy": 0.9642346208869814,
+      "nll": 0.17320068180561066,
+      "fixes_vs_101": 2,
+      "breaks_vs_101": 6
+    },
+    {
+      "recipe": "avgmax_plus_current_ensemble",
+      "correct": 674,
+      "errors": 25,
+      "accuracy": 0.9642346208869814,
+      "nll": 0.14401830732822418,
+      "fixes_vs_101": 4,
+      "breaks_vs_101": 8
+    }
+  ],
+  "class_metrics": [
+    {
+      "recipe": "avgmax",
+      "classes": [
+        {
+          "class_name": "baseball_diamond",
+          "errors": 2,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "basketball_court",
+          "errors": 3,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "bridge",
+          "errors": 0,
+          "false_positives": 2,
+          "support": 34
+        },
+        {
+          "class_name": "church",
+          "errors": 7,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "cloud",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "commercial_area",
+          "errors": 0,
+          "false_positives": 5,
+          "support": 35
+        },
+        {
+          "class_name": "lake",
+          "errors": 4,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "medium_residential",
+          "errors": 1,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "overpass",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "palace",
+          "errors": 3,
+          "false_positives": 4,
+          "support": 35
+        },
+        {
+          "class_name": "railway",
+          "errors": 1,
+          "false_positives": 3,
+          "support": 35
+        },
+        {
+          "class_name": "railway_station",
+          "errors": 3,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "rectangular_farmland",
+          "errors": 0,
+          "false_positives": 2,
+          "support": 35
+        },
+        {
+          "class_name": "roundabout",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "runway",
+          "errors": 0,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "sea_ice",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "snowberg",
+          "errors": 0,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "tennis_court",
+          "errors": 0,
+          "false_positives": 3,
+          "support": 35
+        },
+        {
+          "class_name": "terrace",
+          "errors": 2,
+          "false_positives": 2,
+          "support": 35
+        },
+        {
+          "class_name": "wetland",
+          "errors": 2,
+          "false_positives": 2,
+          "support": 35
+        }
+      ]
+    },
+    {
+      "recipe": "resnet101",
+      "classes": [
+        {
+          "class_name": "baseball_diamond",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "basketball_court",
+          "errors": 2,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "bridge",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 34
+        },
+        {
+          "class_name": "church",
+          "errors": 7,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "cloud",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "commercial_area",
+          "errors": 0,
+          "false_positives": 5,
+          "support": 35
+        },
+        {
+          "class_name": "lake",
+          "errors": 4,
+          "false_positives": 2,
+          "support": 35
+        },
+        {
+          "class_name": "medium_residential",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "overpass",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "palace",
+          "errors": 2,
+          "false_positives": 5,
+          "support": 35
+        },
+        {
+          "class_name": "railway",
+          "errors": 1,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "railway_station",
+          "errors": 1,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "rectangular_farmland",
+          "errors": 0,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "roundabout",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "runway",
+          "errors": 0,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "sea_ice",
+          "errors": 1,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "snowberg",
+          "errors": 0,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "tennis_court",
+          "errors": 0,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "terrace",
+          "errors": 1,
+          "false_positives": 2,
+          "support": 35
+        },
+        {
+          "class_name": "wetland",
+          "errors": 2,
+          "false_positives": 3,
+          "support": 35
+        }
+      ]
+    },
+    {
+      "recipe": "current_ensemble",
+      "classes": [
+        {
+          "class_name": "baseball_diamond",
+          "errors": 1,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "basketball_court",
+          "errors": 3,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "bridge",
+          "errors": 0,
+          "false_positives": 1,
+          "support": 34
+        },
+        {
+          "class_name": "church",
+          "errors": 6,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "cloud",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "commercial_area",
+          "errors": 0,
+          "false_positives": 4,
+          "support": 35
+        },
+        {
+          "class_name": "lake",
+          "errors": 3,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "medium_residential",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "overpass",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "palace",
+          "errors": 2,
+          "false_positives": 5,
+          "support": 35
+        },
+        {
+          "class_name": "railway",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "railway_station",
+          "errors": 1,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "rectangular_farmland",
+          "errors": 0,
+          "false_positives": 2,
+          "support": 35
+        },
+        {
+          "class_name": "roundabout",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "runway",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "sea_ice",
+          "errors": 0,
+          "false_positives": 0,
+          "support": 35
+        },
+        {
+          "class_name": "snowberg",
+          "errors": 0,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "tennis_court",
+          "errors": 1,
+          "false_positives": 2,
+          "support": 35
+        },
+        {
+          "class_name": "terrace",
+          "errors": 2,
+          "false_positives": 1,
+          "support": 35
+        },
+        {
+          "class_name": "wetland",
+          "errors": 1,
+          "false_positives": 2,
+          "support": 35
+        }
+      ]
+    }
+  ],
+  "paired": {
+    "avgmax__vs__resnet101": {
+      "fixes": 3,
+      "breaks": 10,
+      "shared_errors": 18
+    },
+    "avgmax__vs__current_ensemble": {
+      "fixes": 2,
+      "breaks": 10,
+      "shared_errors": 18
+    },
+    "resnet101__vs__resnet101": {
+      "fixes": 0,
+      "breaks": 0,
+      "shared_errors": 21
+    },
+    "resnet101__vs__current_ensemble": {
+      "fixes": 4,
+      "breaks": 5,
+      "shared_errors": 16
+    },
+    "stronger50__vs__resnet101": {
+      "fixes": 9,
+      "breaks": 12,
+      "shared_errors": 12
+    },
+    "stronger50__vs__current_ensemble": {
+      "fixes": 5,
+      "breaks": 9,
+      "shared_errors": 15
+    },
+    "current_ensemble__vs__resnet101": {
+      "fixes": 5,
+      "breaks": 4,
+      "shared_errors": 16
+    },
+    "current_ensemble__vs__current_ensemble": {
+      "fixes": 0,
+      "breaks": 0,
+      "shared_errors": 20
+    },
+    "avgmax_plus_resnet101__vs__resnet101": {
+      "fixes": 2,
+      "breaks": 6,
+      "shared_errors": 19
+    },
+    "avgmax_plus_resnet101__vs__current_ensemble": {
+      "fixes": 2,
+      "breaks": 7,
+      "shared_errors": 18
+    },
+    "avgmax_plus_current_ensemble__vs__resnet101": {
+      "fixes": 4,
+      "breaks": 8,
+      "shared_errors": 17
+    },
+    "avgmax_plus_current_ensemble__vs__current_ensemble": {
+      "fixes": 1,
+      "breaks": 6,
+      "shared_errors": 19
+    }
+  },
+  "errors": {
+    "avgmax": [
+      {
+        "id": "32.jpg",
+        "true": "palace",
+        "predicted": "commercial_area",
+        "confidence": 0.9990744590759277
+      },
+      {
+        "id": "1977.jpg",
+        "true": "basketball_court",
+        "predicted": "tennis_court",
+        "confidence": 0.9999642372131348
+      },
+      {
+        "id": "3201.jpg",
+        "true": "railway",
+        "predicted": "terrace",
+        "confidence": 0.5949846506118774
+      },
+      {
+        "id": "3617.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 0.9991760849952698
+      },
+      {
+        "id": "4329.jpg",
+        "true": "church",
+        "predicted": "commercial_area",
+        "confidence": 0.9999961853027344
+      },
+      {
+        "id": "4735.jpg",
+        "true": "railway_station",
+        "predicted": "railway",
+        "confidence": 0.7405418157577515
+      },
+      {
+        "id": "5900.jpg",
+        "true": "railway_station",
+        "predicted": "railway",
+        "confidence": 0.9719323515892029
+      },
+      {
+        "id": "6615.jpg",
+        "true": "medium_residential",
+        "predicted": "church",
+        "confidence": 0.9228206872940063
+      },
+      {
+        "id": "6931.jpg",
+        "true": "basketball_court",
+        "predicted": "tennis_court",
+        "confidence": 0.9673023223876953
+      },
+      {
+        "id": "7548.jpg",
+        "true": "church",
+        "predicted": "commercial_area",
+        "confidence": 0.6535343527793884
+      },
+      {
+        "id": "7790.jpg",
+        "true": "wetland",
+        "predicted": "lake",
+        "confidence": 0.9265739917755127
+      },
+      {
+        "id": "9393.jpg",
+        "true": "wetland",
+        "predicted": "bridge",
+        "confidence": 0.7999652028083801
+      },
+      {
+        "id": "10003.jpg",
+        "true": "basketball_court",
+        "predicted": "terrace",
+        "confidence": 0.9193155169487
+      },
+      {
+        "id": "10127.jpg",
+        "true": "terrace",
+        "predicted": "rectangular_farmland",
+        "confidence": 0.9825177788734436
+      },
+      {
+        "id": "10371.jpg",
+        "true": "terrace",
+        "predicted": "rectangular_farmland",
+        "confidence": 0.805397093296051
+      },
+      {
+        "id": "10472.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 0.9992403984069824
+      },
+      {
+        "id": "10647.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 1.0
+      },
+      {
+        "id": "10681.jpg",
+        "true": "baseball_diamond",
+        "predicted": "tennis_court",
+        "confidence": 0.7322290539741516
+      },
+      {
+        "id": "11423.jpg",
+        "true": "palace",
+        "predicted": "railway_station",
+        "confidence": 0.9897204041481018
+      },
+      {
+        "id": "11562.jpg",
+        "true": "palace",
+        "predicted": "commercial_area",
+        "confidence": 0.9519760012626648
+      },
+      {
+        "id": "12223.jpg",
+        "true": "lake",
+        "predicted": "runway",
+        "confidence": 0.9303409457206726
+      },
+      {
+        "id": "12286.jpg",
+        "true": "baseball_diamond",
+        "predicted": "bridge",
+        "confidence": 0.788239061832428
+      },
+      {
+        "id": "12301.jpg",
+        "true": "lake",
+        "predicted": "snowberg",
+        "confidence": 1.0
+      },
+      {
+        "id": "12684.jpg",
+        "true": "church",
+        "predicted": "commercial_area",
+        "confidence": 0.5631170272827148
+      },
+      {
+        "id": "12850.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 0.9994644522666931
+      },
+      {
+        "id": "13048.jpg",
+        "true": "lake",
+        "predicted": "wetland",
+        "confidence": 0.9994210004806519
+      },
+      {
+        "id": "13473.jpg",
+        "true": "lake",
+        "predicted": "wetland",
+        "confidence": 0.9997825026512146
+      },
+      {
+        "id": "13688.jpg",
+        "true": "railway_station",
+        "predicted": "railway",
+        "confidence": 0.8169172406196594
+      }
+    ],
+    "resnet101": [
+      {
+        "id": "32.jpg",
+        "true": "palace",
+        "predicted": "commercial_area",
+        "confidence": 0.9975662231445312
+      },
+      {
+        "id": "1977.jpg",
+        "true": "basketball_court",
+        "predicted": "tennis_court",
+        "confidence": 0.995732843875885
+      },
+      {
+        "id": "3201.jpg",
+        "true": "railway",
+        "predicted": "terrace",
+        "confidence": 0.5199941396713257
+      },
+      {
+        "id": "3617.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 0.9995853304862976
+      },
+      {
+        "id": "4329.jpg",
+        "true": "church",
+        "predicted": "commercial_area",
+        "confidence": 0.9999806880950928
+      },
+      {
+        "id": "6146.jpg",
+        "true": "railway_station",
+        "predicted": "palace",
+        "confidence": 0.5972216129302979
+      },
+      {
+        "id": "7548.jpg",
+        "true": "church",
+        "predicted": "commercial_area",
+        "confidence": 0.8599423766136169
+      },
+      {
+        "id": "7790.jpg",
+        "true": "wetland",
+        "predicted": "lake",
+        "confidence": 0.88701331615448
+      },
+      {
+        "id": "8698.jpg",
+        "true": "sea_ice",
+        "predicted": "wetland",
+        "confidence": 0.6921789646148682
+      },
+      {
+        "id": "10003.jpg",
+        "true": "basketball_court",
+        "predicted": "terrace",
+        "confidence": 0.7200527787208557
+      },
+      {
+        "id": "10127.jpg",
+        "true": "terrace",
+        "predicted": "rectangular_farmland",
+        "confidence": 0.9798693060874939
+      },
+      {
+        "id": "10472.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 0.976123571395874
+      },
+      {
+        "id": "10533.jpg",
+        "true": "wetland",
+        "predicted": "lake",
+        "confidence": 0.7048923969268799
+      },
+      {
+        "id": "10647.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 0.9999998807907104
+      },
+      {
+        "id": "11562.jpg",
+        "true": "palace",
+        "predicted": "commercial_area",
+        "confidence": 0.9872671961784363
+      },
+      {
+        "id": "12223.jpg",
+        "true": "lake",
+        "predicted": "runway",
+        "confidence": 0.5669299364089966
+      },
+      {
+        "id": "12301.jpg",
+        "true": "lake",
+        "predicted": "snowberg",
+        "confidence": 0.9999995231628418
+      },
+      {
+        "id": "12684.jpg",
+        "true": "church",
+        "predicted": "commercial_area",
+        "confidence": 0.5553278923034668
+      },
+      {
+        "id": "12850.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 0.9213988780975342
+      },
+      {
+        "id": "13048.jpg",
+        "true": "lake",
+        "predicted": "wetland",
+        "confidence": 0.9585956335067749
+      },
+      {
+        "id": "13473.jpg",
+        "true": "lake",
+        "predicted": "wetland",
+        "confidence": 0.9929950833320618
+      }
+    ],
+    "current_ensemble": [
+      {
+        "id": "32.jpg",
+        "true": "palace",
+        "predicted": "commercial_area",
+        "confidence": 0.6205233335494995
+      },
+      {
+        "id": "1977.jpg",
+        "true": "basketball_court",
+        "predicted": "tennis_court",
+        "confidence": 0.9525530338287354
+      },
+      {
+        "id": "3617.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 0.9979817867279053
+      },
+      {
+        "id": "4329.jpg",
+        "true": "church",
+        "predicted": "commercial_area",
+        "confidence": 0.9936766624450684
+      },
+      {
+        "id": "4761.jpg",
+        "true": "tennis_court",
+        "predicted": "church",
+        "confidence": 0.4133811593055725
+      },
+      {
+        "id": "6146.jpg",
+        "true": "railway_station",
+        "predicted": "palace",
+        "confidence": 0.6837217807769775
+      },
+      {
+        "id": "6931.jpg",
+        "true": "basketball_court",
+        "predicted": "tennis_court",
+        "confidence": 0.6630679368972778
+      },
+      {
+        "id": "7790.jpg",
+        "true": "wetland",
+        "predicted": "lake",
+        "confidence": 0.695466160774231
+      },
+      {
+        "id": "10003.jpg",
+        "true": "basketball_court",
+        "predicted": "terrace",
+        "confidence": 0.8431299924850464
+      },
+      {
+        "id": "10127.jpg",
+        "true": "terrace",
+        "predicted": "rectangular_farmland",
+        "confidence": 0.9572353363037109
+      },
+      {
+        "id": "10371.jpg",
+        "true": "terrace",
+        "predicted": "rectangular_farmland",
+        "confidence": 0.5425633192062378
+      },
+      {
+        "id": "10472.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 0.8256703019142151
+      },
+      {
+        "id": "10647.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 0.9999988079071045
+      },
+      {
+        "id": "11562.jpg",
+        "true": "palace",
+        "predicted": "commercial_area",
+        "confidence": 0.6666675209999084
+      },
+      {
+        "id": "12286.jpg",
+        "true": "baseball_diamond",
+        "predicted": "bridge",
+        "confidence": 0.6485587358474731
+      },
+      {
+        "id": "12301.jpg",
+        "true": "lake",
+        "predicted": "snowberg",
+        "confidence": 0.9999294281005859
+      },
+      {
+        "id": "12684.jpg",
+        "true": "church",
+        "predicted": "commercial_area",
+        "confidence": 0.7320717573165894
+      },
+      {
+        "id": "12850.jpg",
+        "true": "church",
+        "predicted": "palace",
+        "confidence": 0.9569460153579712
+      },
+      {
+        "id": "13048.jpg",
+        "true": "lake",
+        "predicted": "wetland",
+        "confidence": 0.950157880783081
+      },
+      {
+        "id": "13473.jpg",
+        "true": "lake",
+        "predicted": "wetland",
+        "confidence": 0.9926390647888184
+      }
+    ]
+  },
+  "routing": [
+    {
+      "classes": [
+        "church",
+        "palace",
+        "commercial_area"
+      ],
+      "train_counts": {
+        "church": 250,
+        "commercial_area": 250,
+        "palace": 249
+      },
+      "routed": 107,
+      "correct_at_risk": 97,
+      "within_group_errors": 8,
+      "outside_false_positives": 2,
+      "missed_target_errors": 0
+    },
+    {
+      "classes": [
+        "lake",
+        "wetland",
+        "snowberg",
+        "sea_ice"
+      ],
+      "train_counts": {
+        "lake": 250,
+        "sea_ice": 250,
+        "snowberg": 250,
+        "wetland": 250
+      },
+      "routed": 140,
+      "correct_at_risk": 136,
+      "within_group_errors": 4,
+      "outside_false_positives": 0,
+      "missed_target_errors": 0
+    },
+    {
+      "classes": [
+        "baseball_diamond",
+        "basketball_court",
+        "tennis_court"
+      ],
+      "train_counts": {
+        "baseball_diamond": 250,
+        "basketball_court": 250,
+        "tennis_court": 250
+      },
+      "routed": 102,
+      "correct_at_risk": 100,
+      "within_group_errors": 2,
+      "outside_false_positives": 0,
+      "missed_target_errors": 3
+    }
+  ],
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.0131753657507774,
+      "train_accuracy": 0.99499899979996,
+      "val_loss": 0.2477035086298193,
+      "val_accuracy": 0.9527896995708156,
+      "learning_rate": 1e-05,
+      "next_learning_rate": 9.846666218300808e-06,
+      "learning_rates": "{\"backbone\": 1e-05, \"head\": 0.0001}",
+      "next_learning_rates": "{\"backbone\": 9.846666218300808e-06, \"head\": 9.831332840130888e-05}",
+      "training_mode": "head_only",
+      "train_time_sec": 46.411880377000045,
+      "val_time_sec": 4.467891807000001,
+      "epoch_time_sec": 50.881169441
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.0271019005399949,
+      "train_accuracy": 0.9925985197039408,
+      "val_loss": 0.2905420025411556,
+      "val_accuracy": 0.9527896995708156,
+      "learning_rate": 9.846666218300808e-06,
+      "next_learning_rate": 9.397114317029975e-06,
+      "learning_rates": "{\"backbone\": 9.846666218300808e-06, \"head\": 9.831332840130888e-05}",
+      "next_learning_rates": "{\"backbone\": 9.397114317029975e-06, \"head\": 9.336825748732972e-05}",
+      "training_mode": "partial",
+      "train_time_sec": 74.12010526400002,
+      "val_time_sec": 4.740106466000043,
+      "epoch_time_sec": 78.86198383199996
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.015991836423026,
+      "train_accuracy": 0.9945989197839568,
+      "val_loss": 0.2271563257034121,
+      "val_accuracy": 0.9570815450643776,
+      "learning_rate": 9.397114317029975e-06,
+      "next_learning_rate": 8.681980515339464e-06,
+      "learning_rates": "{\"backbone\": 9.397114317029975e-06, \"head\": 9.336825748732972e-05}",
+      "next_learning_rates": "{\"backbone\": 8.681980515339464e-06, \"head\": 8.55017856687341e-05}",
+      "training_mode": "partial",
+      "train_time_sec": 75.81656429199995,
+      "val_time_sec": 4.618582743000047,
+      "epoch_time_sec": 80.43659863999994
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.0050289026465392,
+      "train_accuracy": 0.9983996799359872,
+      "val_loss": 0.2444619455385436,
+      "val_accuracy": 0.9542203147353362,
+      "learning_rate": 8.681980515339464e-06,
+      "next_learning_rate": 7.75e-06,
+      "learning_rates": "{\"backbone\": 8.681980515339464e-06, \"head\": 8.55017856687341e-05}",
+      "next_learning_rates": "{\"backbone\": 7.75e-06, \"head\": 7.525e-05}",
+      "training_mode": "partial",
+      "train_time_sec": 75.72058582699992,
+      "val_time_sec": 4.584846879999986,
+      "epoch_time_sec": 80.3065746719999
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.0039578445667562,
+      "train_accuracy": 0.9985997199439888,
+      "val_loss": 0.2610574992143669,
+      "val_accuracy": 0.949928469241774,
+      "learning_rate": 7.75e-06,
+      "next_learning_rate": 6.664685702961344e-06,
+      "learning_rates": "{\"backbone\": 7.75e-06, \"head\": 7.525e-05}",
+      "next_learning_rates": "{\"backbone\": 6.664685702961344e-06, \"head\": 6.331154273257477e-05}",
+      "training_mode": "partial",
+      "train_time_sec": 75.70105612299994,
+      "val_time_sec": 4.622767279999948,
+      "epoch_time_sec": 80.32546610899999
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.005524076950868,
+      "train_accuracy": 0.9977995599119824,
+      "val_loss": 0.2398462068743854,
+      "val_accuracy": 0.9570815450643776,
+      "learning_rate": 6.664685702961344e-06,
+      "next_learning_rate": 5.500000000000001e-06,
+      "learning_rates": "{\"backbone\": 6.664685702961344e-06, \"head\": 6.331154273257477e-05}",
+      "next_learning_rates": "{\"backbone\": 5.500000000000001e-06, \"head\": 5.0499999999999994e-05}",
+      "training_mode": "partial",
+      "train_time_sec": 75.916373937,
+      "val_time_sec": 4.610530272000005,
+      "epoch_time_sec": 80.52837517500006
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.0042669229170187,
+      "train_accuracy": 0.9991998399679936,
+      "val_loss": 0.2827382881466821,
+      "val_accuracy": 0.9556509298998568,
+      "learning_rate": 5.500000000000001e-06,
+      "next_learning_rate": 4.335314297038658e-06,
+      "learning_rates": "{\"backbone\": 5.500000000000001e-06, \"head\": 5.0499999999999994e-05}",
+      "next_learning_rates": "{\"backbone\": 4.335314297038658e-06, \"head\": 3.768845726742522e-05}",
+      "training_mode": "partial",
+      "train_time_sec": 75.69056074899993,
+      "val_time_sec": 4.612323697999955,
+      "epoch_time_sec": 80.30467227300005
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.0016001065264313,
+      "train_accuracy": 0.9991998399679936,
+      "val_loss": 0.244236184171756,
+      "val_accuracy": 0.9599427753934192,
+      "learning_rate": 4.335314297038658e-06,
+      "next_learning_rate": 3.250000000000002e-06,
+      "learning_rates": "{\"backbone\": 4.335314297038658e-06, \"head\": 3.768845726742522e-05}",
+      "next_learning_rates": "{\"backbone\": 3.250000000000002e-06, \"head\": 2.575000000000001e-05}",
+      "training_mode": "partial",
+      "train_time_sec": 75.62105269899985,
+      "val_time_sec": 4.63047923299996,
+      "epoch_time_sec": 80.25313598399998
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.0030528341498694,
+      "train_accuracy": 0.9985997199439888,
+      "val_loss": 0.2414472774789919,
+      "val_accuracy": 0.9570815450643776,
+      "learning_rate": 3.250000000000002e-06,
+      "next_learning_rate": 2.318019484660537e-06,
+      "learning_rates": "{\"backbone\": 3.250000000000002e-06, \"head\": 2.575000000000001e-05}",
+      "next_learning_rates": "{\"backbone\": 2.318019484660537e-06, \"head\": 1.54982143312659e-05}",
+      "training_mode": "partial",
+      "train_time_sec": 75.76181284099994,
+      "val_time_sec": 4.616532450000022,
+      "epoch_time_sec": 80.3798387710001
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.0005117283410069,
+      "train_accuracy": 1.0,
+      "val_loss": 0.2258697036892,
+      "val_accuracy": 0.9570815450643776,
+      "learning_rate": 2.318019484660537e-06,
+      "next_learning_rate": 1.6028856829700262e-06,
+      "learning_rates": "{\"backbone\": 2.318019484660537e-06, \"head\": 1.54982143312659e-05}",
+      "next_learning_rates": "{\"backbone\": 1.6028856829700262e-06, \"head\": 7.631742512670284e-06}",
+      "training_mode": "partial",
+      "train_time_sec": 75.93913334000013,
+      "val_time_sec": 4.615905254999916,
+      "epoch_time_sec": 80.55633454199983
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.0007097575599149,
+      "train_accuracy": 1.0,
+      "val_loss": 0.2282694949698243,
+      "val_accuracy": 0.9542203147353362,
+      "learning_rate": 1.6028856829700262e-06,
+      "next_learning_rate": 1.1533337816991932e-06,
+      "learning_rates": "{\"backbone\": 1.6028856829700262e-06, \"head\": 7.631742512670284e-06}",
+      "next_learning_rates": "{\"backbone\": 1.1533337816991932e-06, \"head\": 2.6866715986911244e-06}",
+      "training_mode": "partial",
+      "train_time_sec": 75.69069959900003,
+      "val_time_sec": 4.597151074000067,
+      "epoch_time_sec": 80.28911566900001
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.0006844158517131,
+      "train_accuracy": 0.9997999599919984,
+      "val_loss": 0.224020047730975,
+      "val_accuracy": 0.9585121602288984,
+      "learning_rate": 1.1533337816991932e-06,
+      "next_learning_rate": 1e-06,
+      "learning_rates": "{\"backbone\": 1.1533337816991932e-06, \"head\": 2.6866715986911244e-06}",
+      "next_learning_rates": "{\"backbone\": 1e-06, \"head\": 1e-06}",
+      "training_mode": "partial",
+      "train_time_sec": 75.54985566799996,
+      "val_time_sec": 4.60078158500005,
+      "epoch_time_sec": 80.15184480699986
+    }
+  ],
+  "train_time_min": 15.582647352016666,
+  "source_hashes": {
+    "artifacts/predictions/resnet101_partial_avgmax_domain_shift_001/val_probabilities.npz": "dbe41831ab68467d21389e6e44468b5186f23d580136126fb8e8502207496ee7",
+    "artifacts/predictions/resnet101_partial_domain_shift_stronger_001/val_probabilities.npz": "1adb49afa5ce5665cedbb55a2bda3615a3a2b00a62d5d720ba3603e40524dcdc",
+    "artifacts/predictions/quality_inference_001/stronger__none.npz": "75d8f376c85d8e71da82f61bdd966e2f43ef42cae3e2c5fe1fc6a87af6b87a19",
+    "artifacts/predictions/resnet101_global_local_001/resnet101_none_plus_stronger_d4.npz": "73d0555fe4ace40b57ab2eef9e16bfc2660a78bfa81458fde64a15f7cde92e11"
+  },
+  "journal_sha256": "80445f63c07f7cbfc9c2b88ed0a5c1393fb19b3aa54a925cb87bcd9e4c0d129b"
+}
