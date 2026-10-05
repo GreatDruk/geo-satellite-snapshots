@@ -28,9 +28,14 @@ def initialize_from_checkpoint(model, path, class_labels, data_config):
         new=torch.zeros_like(new)
         new[:,:old.shape[1]]=old
         source[key]=new;expanded=True
+    # A new auxiliary objective may add a train-only head. All shared weights
+    # remain strict; no unrelated missing/unexpected keys are silently ignored.
+    added_auxiliary = 'auxiliary_head.weight' in target and 'auxiliary_head.weight' not in source
+    if added_auxiliary:
+        source['auxiliary_head.weight'] = target['auxiliary_head.weight']
     model.load_state_dict(source,strict=True)
     digest=hashlib.sha256()
     with path.open('rb') as f:
         for block in iter(lambda:f.read(1024*1024),b''):digest.update(block)
     return {'checkpoint':str(path),'sha256':digest.hexdigest(),'source_epoch':checkpoint['epoch'],
-            'head_expansion':expanded,'optimizer_resumed':False}
+            'head_expansion':expanded,'auxiliary_head_initialized':added_auxiliary,'optimizer_resumed':False}
