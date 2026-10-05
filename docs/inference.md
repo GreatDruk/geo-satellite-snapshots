@@ -63,4 +63,22 @@ result = run_selected_inference(
 
 Относительные checkpoint paths в manifest переносимы вместе с репозиторием. Для inference weights download не выполняется. CUDA используется при наличии, иначе CPU; pin_memory включён только на CUDA, num_workers=0 по умолчанию безопасен на Windows. Test не читается validation suite; train не читается inference pipeline. Фиксированы seed 42 и deterministic warning mode; побитовая идентичность между различными CPU/CUDA версиями не обещается.
 
-Специалист зданий остаётся условным следующим обучением после оценки ResNet101; сейчас не добавлен обязательный запуск трёх специалистов или full. Это соответствует бюджету `quality_next_steps.md`.
+После завершённой crop-диагностики первым новым обучением выбран Average+Max fine-tuning. Специалист зданий — условный резерв после его оценки; три специалиста и full не добавлены. Результаты: `global_local_review.md`.
+
+## Global/local diagnostic
+
+В `06_tta_ensembles.ipynb` добавлен отдельный раздел full+5 crops. Из исходного RGB кадра вырезаются160×160 четыре угла и центр, затем каждый resize→256 с сохранённой нормализацией. Для полного кадра одновременно считаются none/flips/D4 (8 общих forwards); crops добавляют5. Случайных операций нет.
+
+Запуск из корня:
+
+```powershell
+python -m src.local_inference --checkpoint artifacts/models/resnet101_partial_domain_shift_stronger_001/best.pt --run-id resnet101_global_local_001 --device auto --batch-size 4 --cpu-threads 4
+```
+
+Уникальный ID защищает результаты; `--resume` проверяет checkpoint/CSV/protocol и использует завершённые chunks. Для продолжения сохранить исходный batch_size. Завершённый run с resume читается без forwards. В ноутбуке RUN_LOCAL=False по умолчанию.
+
+Функция `analyze_saved_local` сравнивает пять работающих вариантов101, исключая отдельные crop-классификаторы из выбора итогового решения. При наличии проверенного кэша stronger50 добавляет ровно два фиксированных ансамбля:101 none+50 D4 и101 flips+50 flips. Изменившийся checkpoint или probability cache вызывает ошибку. Артефакты: comparison.csv, crop_diagnostic.csv, отдельные view NPZ/CSV, final_comparison.csv, analysis_summary.json, per-class metrics/confusions и final_selection.json. experiments.csv остаётся журналом обучений.
+
+`global_local_mean/max`: фиксированные0.75 full +0.25 local; max нормируется по классам. Oracle any-crop оценивает только потенциальную распознаваемость, никогда не используется для выбора crop при inference. `show_local_cases` показывает full/crops и top3 каждого view.
+
+Ориентации и обычные ансамбли используют manifest format_version1. Global/local использует version2, method=global_local, crop_size, local_pool и global_weight; `run_selected_inference` поддерживает оба. Test запускается только явно после выбора и сохраняет submission в sample-порядке. Replay version2 проверен на синтетическом val/test без внешнего fitting.
