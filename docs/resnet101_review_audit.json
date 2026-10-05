@@ -1,0 +1,3512 @@
+{
+  "source_hashes": {
+    "experiments.csv": "a78d8d68c88df48f7c88b09ec579bbecdf58790b3a18e4d76d43343ebb4069f6",
+    "artifacts/predictions/resnet101_partial_domain_shift_stronger_001/val_probabilities.npz": "1adb49afa5ce5665cedbb55a2bda3615a3a2b00a62d5d720ba3603e40524dcdc"
+  },
+  "training": {
+    "resnet101": {
+      "best_epoch": 21,
+      "val_accuracy": 0.9699570815450643,
+      "train_time_min": 37.15595772961667,
+      "best_val_loss": 0.1632612409614404,
+      "last_accuracy": 0.96137339055794,
+      "last_loss": 0.1758398623382259,
+      "last5_mean_accuracy": 0.9653791130185979
+    },
+    "stronger": {
+      "best_epoch": 20,
+      "val_accuracy": 0.9656652360515021,
+      "train_time_min": 18.85027812818333,
+      "best_val_loss": 0.1841118035035924,
+      "last_accuracy": 0.9642346208869814,
+      "last_loss": 0.1873893135990707,
+      "last5_mean_accuracy": 0.9625178826895565
+    },
+    "mild": {
+      "best_epoch": 22,
+      "val_accuracy": 0.9613733905579399,
+      "train_time_min": 18.87117892951666,
+      "best_val_loss": 0.2081156412015625,
+      "last_accuracy": 0.9556509298998568,
+      "last_loss": 0.2138111753301303,
+      "last5_mean_accuracy": 0.9570815450643776
+    }
+  },
+  "matched_config": true,
+  "comparison": [
+    {
+      "recipe": "resnet101_plus_stronger_d4",
+      "correct": 679,
+      "errors": 20,
+      "val_accuracy": 0.9713876967095851,
+      "nll": 0.13227473199367523,
+      "members": [
+        "resnet101_none",
+        "stronger_d4"
+      ]
+    },
+    {
+      "recipe": "resnet101_none",
+      "correct": 678,
+      "errors": 21,
+      "val_accuracy": 0.9699570815450643,
+      "nll": 0.16326124966144562,
+      "members": [
+        "resnet101_none"
+      ]
+    },
+    {
+      "recipe": "resnet101_plus_stronger_flips",
+      "correct": 677,
+      "errors": 22,
+      "val_accuracy": 0.9685264663805436,
+      "nll": 0.13011744618415833,
+      "members": [
+        "resnet101_none",
+        "stronger_flips"
+      ]
+    },
+    {
+      "recipe": "resnet101_plus_both_d4",
+      "correct": 677,
+      "errors": 22,
+      "val_accuracy": 0.9685264663805436,
+      "nll": 0.1303398162126541,
+      "members": [
+        "resnet101_none",
+        "stronger_d4",
+        "mild_d4"
+      ]
+    },
+    {
+      "recipe": "resnet101_plus_stronger_none",
+      "correct": 677,
+      "errors": 22,
+      "val_accuracy": 0.9685264663805436,
+      "nll": 0.13494327664375305,
+      "members": [
+        "resnet101_none",
+        "stronger_none"
+      ]
+    },
+    {
+      "recipe": "old_ensemble_flips",
+      "correct": 677,
+      "errors": 22,
+      "val_accuracy": 0.9685264663805436,
+      "nll": 0.1544606238603592,
+      "members": [
+        "stronger_flips",
+        "mild_flips"
+      ]
+    },
+    {
+      "recipe": "resnet101_plus_both_none",
+      "correct": 676,
+      "errors": 23,
+      "val_accuracy": 0.9670958512160229,
+      "nll": 0.13604101538658142,
+      "members": [
+        "resnet101_none",
+        "stronger_none",
+        "mild_none"
+      ]
+    },
+    {
+      "recipe": "old_ensemble_d4",
+      "correct": 676,
+      "errors": 23,
+      "val_accuracy": 0.9670958512160229,
+      "nll": 0.1536775529384613,
+      "members": [
+        "stronger_d4",
+        "mild_d4"
+      ]
+    },
+    {
+      "recipe": "old_ensemble_none",
+      "correct": 676,
+      "errors": 23,
+      "val_accuracy": 0.9670958512160229,
+      "nll": 0.16855910420417786,
+      "members": [
+        "stronger_none",
+        "mild_none"
+      ]
+    },
+    {
+      "recipe": "resnet101_plus_both_flips",
+      "correct": 675,
+      "errors": 24,
+      "val_accuracy": 0.9656652360515021,
+      "nll": 0.13067327439785004,
+      "members": [
+        "resnet101_none",
+        "stronger_flips",
+        "mild_flips"
+      ]
+    },
+    {
+      "recipe": "resnet101_plus_mild_flips",
+      "correct": 675,
+      "errors": 24,
+      "val_accuracy": 0.9656652360515021,
+      "nll": 0.1431303471326828,
+      "members": [
+        "resnet101_none",
+        "mild_flips"
+      ]
+    },
+    {
+      "recipe": "mild_d4",
+      "correct": 675,
+      "errors": 24,
+      "val_accuracy": 0.9656652360515021,
+      "nll": 0.17257601022720337,
+      "members": [
+        "mild_d4"
+      ]
+    },
+    {
+      "recipe": "stronger_none",
+      "correct": 675,
+      "errors": 24,
+      "val_accuracy": 0.9656652360515021,
+      "nll": 0.18411193788051605,
+      "members": [
+        "stronger_none"
+      ]
+    },
+    {
+      "recipe": "resnet101_plus_mild_none",
+      "correct": 674,
+      "errors": 25,
+      "val_accuracy": 0.9642346208869814,
+      "nll": 0.1514378935098648,
+      "members": [
+        "resnet101_none",
+        "mild_none"
+      ]
+    },
+    {
+      "recipe": "stronger_flips",
+      "correct": 674,
+      "errors": 25,
+      "val_accuracy": 0.9642346208869814,
+      "nll": 0.16723528504371643,
+      "members": [
+        "stronger_flips"
+      ]
+    },
+    {
+      "recipe": "resnet101_plus_mild_d4",
+      "correct": 673,
+      "errors": 26,
+      "val_accuracy": 0.9628040057224606,
+      "nll": 0.13923296332359314,
+      "members": [
+        "resnet101_none",
+        "mild_d4"
+      ]
+    },
+    {
+      "recipe": "mild_flips",
+      "correct": 673,
+      "errors": 26,
+      "val_accuracy": 0.9628040057224606,
+      "nll": 0.18326693773269653,
+      "members": [
+        "mild_flips"
+      ]
+    },
+    {
+      "recipe": "mild_none",
+      "correct": 672,
+      "errors": 27,
+      "val_accuracy": 0.9613733905579399,
+      "nll": 0.2081155627965927,
+      "members": [
+        "mild_none"
+      ]
+    },
+    {
+      "recipe": "stronger_d4",
+      "correct": 671,
+      "errors": 28,
+      "val_accuracy": 0.9599427753934192,
+      "nll": 0.1675301343202591,
+      "members": [
+        "stronger_d4"
+      ]
+    }
+  ],
+  "class_metrics": {
+    "resnet101_none": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9428571428571428,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "church",
+        "errors": 7,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.8,
+        "precision": 1.0
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 1.0,
+        "precision": 0.875
+      },
+      {
+        "class_name": "lake",
+        "errors": 4,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.8857142857142857,
+        "precision": 0.9393939393939394
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 0.9428571428571428,
+        "precision": 0.868421052631579
+      },
+      {
+        "class_name": "railway",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "wetland",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9428571428571428,
+        "precision": 0.9166666666666666
+      }
+    ],
+    "stronger_none": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "church",
+        "errors": 7,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.8,
+        "precision": 0.9333333333333333
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9428571428571428,
+        "precision": 0.9428571428571428
+      },
+      {
+        "class_name": "lake",
+        "errors": 4,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.8857142857142857,
+        "precision": 1.0
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "overpass",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 6,
+        "recall": 1.0,
+        "precision": 0.8536585365853658
+      },
+      {
+        "class_name": "railway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9428571428571428,
+        "precision": 0.9705882352941176
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9428571428571428,
+        "precision": 0.9428571428571428
+      },
+      {
+        "class_name": "terrace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9428571428571428,
+        "precision": 0.9705882352941176
+      },
+      {
+        "class_name": "wetland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 1.0,
+        "precision": 0.9210526315789473
+      }
+    ],
+    "stronger_flips": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9142857142857143,
+        "precision": 0.9696969696969697
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "church",
+        "errors": 8,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.7714285714285715,
+        "precision": 0.9642857142857143
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "lake",
+        "errors": 5,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.8571428571428571,
+        "precision": 1.0
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "overpass",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 1.0,
+        "precision": 0.875
+      },
+      {
+        "class_name": "railway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9428571428571428,
+        "precision": 0.9428571428571428
+      },
+      {
+        "class_name": "terrace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9428571428571428,
+        "precision": 0.9705882352941176
+      },
+      {
+        "class_name": "wetland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 4,
+        "recall": 1.0,
+        "precision": 0.8974358974358975
+      }
+    ],
+    "stronger_d4": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9142857142857143,
+        "precision": 0.9696969696969697
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "church",
+        "errors": 9,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.7428571428571429,
+        "precision": 0.9285714285714286
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "lake",
+        "errors": 5,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8571428571428571,
+        "precision": 0.967741935483871
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "overpass",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 6,
+        "recall": 1.0,
+        "precision": 0.8536585365853658
+      },
+      {
+        "class_name": "railway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9428571428571428,
+        "precision": 1.0
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 1.0,
+        "precision": 0.9210526315789473
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9428571428571428,
+        "precision": 0.9428571428571428
+      },
+      {
+        "class_name": "terrace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9428571428571428,
+        "precision": 0.9705882352941176
+      },
+      {
+        "class_name": "wetland",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 4,
+        "recall": 0.9428571428571428,
+        "precision": 0.8918918918918919
+      }
+    ],
+    "mild_none": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 7,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8,
+        "precision": 0.9655172413793104
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9428571428571428,
+        "precision": 0.9705882352941176
+      },
+      {
+        "class_name": "lake",
+        "errors": 6,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8285714285714286,
+        "precision": 0.9666666666666667
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "palace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 7,
+        "recall": 0.9714285714285714,
+        "precision": 0.8292682926829268
+      },
+      {
+        "class_name": "railway",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "wetland",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 4,
+        "recall": 0.9714285714285714,
+        "precision": 0.8947368421052632
+      }
+    ],
+    "mild_flips": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9428571428571428,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 9,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.7428571428571429,
+        "precision": 0.9285714285714286
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9428571428571428,
+        "precision": 0.9428571428571428
+      },
+      {
+        "class_name": "lake",
+        "errors": 4,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.8857142857142857,
+        "precision": 0.9393939393939394
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 6,
+        "recall": 1.0,
+        "precision": 0.8536585365853658
+      },
+      {
+        "class_name": "railway",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "wetland",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9428571428571428,
+        "precision": 0.9166666666666666
+      }
+    ],
+    "mild_d4": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9428571428571428,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 9,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.7428571428571429,
+        "precision": 0.9285714285714286
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9714285714285714,
+        "precision": 0.918918918918919
+      },
+      {
+        "class_name": "lake",
+        "errors": 4,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8857142857142857,
+        "precision": 0.96875
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 0.9714285714285714,
+        "precision": 0.8717948717948718
+      },
+      {
+        "class_name": "railway",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "wetland",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9714285714285714,
+        "precision": 0.918918918918919
+      }
+    ],
+    "old_ensemble_none": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 9,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.7428571428571429,
+        "precision": 0.9285714285714286
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9428571428571428,
+        "precision": 0.9428571428571428
+      },
+      {
+        "class_name": "lake",
+        "errors": 4,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.8857142857142857,
+        "precision": 1.0
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 7,
+        "recall": 1.0,
+        "precision": 0.8333333333333334
+      },
+      {
+        "class_name": "railway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9428571428571428,
+        "precision": 1.0
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "wetland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 1.0,
+        "precision": 0.9210526315789473
+      }
+    ],
+    "resnet101_plus_stronger_none": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 7,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8,
+        "precision": 0.9655172413793104
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 0.9714285714285714,
+        "precision": 0.8717948717948718
+      },
+      {
+        "class_name": "lake",
+        "errors": 5,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.8571428571428571,
+        "precision": 1.0
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 6,
+        "recall": 0.9428571428571428,
+        "precision": 0.8461538461538461
+      },
+      {
+        "class_name": "railway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "wetland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 1.0,
+        "precision": 0.9210526315789473
+      }
+    ],
+    "resnet101_plus_mild_none": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 6,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8285714285714286,
+        "precision": 0.9666666666666667
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9714285714285714,
+        "precision": 0.918918918918919
+      },
+      {
+        "class_name": "lake",
+        "errors": 5,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8571428571428571,
+        "precision": 0.967741935483871
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 7,
+        "recall": 0.9142857142857143,
+        "precision": 0.8205128205128205
+      },
+      {
+        "class_name": "railway",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9428571428571428,
+        "precision": 0.9428571428571428
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "wetland",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9714285714285714,
+        "precision": 0.918918918918919
+      }
+    ],
+    "resnet101_plus_both_none": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 7,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8,
+        "precision": 0.9655172413793104
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 4,
+        "recall": 0.9714285714285714,
+        "precision": 0.8947368421052632
+      },
+      {
+        "class_name": "lake",
+        "errors": 4,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8857142857142857,
+        "precision": 0.96875
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 7,
+        "recall": 0.9428571428571428,
+        "precision": 0.825
+      },
+      {
+        "class_name": "railway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9428571428571428,
+        "precision": 1.0
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "wetland",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9714285714285714,
+        "precision": 0.918918918918919
+      }
+    ],
+    "old_ensemble_flips": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 9,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.7428571428571429,
+        "precision": 0.9285714285714286
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "lake",
+        "errors": 4,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.8857142857142857,
+        "precision": 1.0
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 1.0,
+        "precision": 0.875
+      },
+      {
+        "class_name": "railway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9428571428571428,
+        "precision": 0.9705882352941176
+      },
+      {
+        "class_name": "wetland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 1.0,
+        "precision": 0.9210526315789473
+      }
+    ],
+    "resnet101_plus_stronger_flips": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 7,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8,
+        "precision": 0.9655172413793104
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 1.0,
+        "precision": 0.875
+      },
+      {
+        "class_name": "lake",
+        "errors": 4,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.8857142857142857,
+        "precision": 0.9393939393939394
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 0.9428571428571428,
+        "precision": 0.868421052631579
+      },
+      {
+        "class_name": "railway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "wetland",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9428571428571428,
+        "precision": 0.9166666666666666
+      }
+    ],
+    "resnet101_plus_mild_flips": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 7,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8,
+        "precision": 0.9655172413793104
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 1.0,
+        "precision": 0.875
+      },
+      {
+        "class_name": "lake",
+        "errors": 5,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.8571428571428571,
+        "precision": 0.9375
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 4,
+        "recall": 0.9428571428571428,
+        "precision": 0.8918918918918919
+      },
+      {
+        "class_name": "railway",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "wetland",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9428571428571428,
+        "precision": 0.9166666666666666
+      }
+    ],
+    "resnet101_plus_both_flips": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 8,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.7714285714285715,
+        "precision": 0.9642857142857143
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 4,
+        "recall": 1.0,
+        "precision": 0.8974358974358975
+      },
+      {
+        "class_name": "lake",
+        "errors": 4,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.8857142857142857,
+        "precision": 0.9393939393939394
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 6,
+        "recall": 0.9428571428571428,
+        "precision": 0.8461538461538461
+      },
+      {
+        "class_name": "railway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9428571428571428,
+        "precision": 1.0
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "wetland",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9428571428571428,
+        "precision": 0.9166666666666666
+      }
+    ],
+    "old_ensemble_d4": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 9,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.7428571428571429,
+        "precision": 0.9629629629629629
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "lake",
+        "errors": 4,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8857142857142857,
+        "precision": 0.96875
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 6,
+        "recall": 1.0,
+        "precision": 0.8536585365853658
+      },
+      {
+        "class_name": "railway",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9428571428571428,
+        "precision": 0.9705882352941176
+      },
+      {
+        "class_name": "wetland",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9714285714285714,
+        "precision": 0.918918918918919
+      }
+    ],
+    "resnet101_plus_stronger_d4": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 6,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8285714285714286,
+        "precision": 0.9666666666666667
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 4,
+        "recall": 1.0,
+        "precision": 0.8974358974358975
+      },
+      {
+        "class_name": "lake",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9142857142857143,
+        "precision": 0.9696969696969697
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 0.9428571428571428,
+        "precision": 0.868421052631579
+      },
+      {
+        "class_name": "railway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9428571428571428,
+        "precision": 0.9705882352941176
+      },
+      {
+        "class_name": "wetland",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      }
+    ],
+    "resnet101_plus_mild_d4": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 7,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.8,
+        "precision": 0.9333333333333333
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 0.9714285714285714,
+        "precision": 0.8717948717948718
+      },
+      {
+        "class_name": "lake",
+        "errors": 5,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.8571428571428571,
+        "precision": 0.9375
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 5,
+        "recall": 0.9428571428571428,
+        "precision": 0.868421052631579
+      },
+      {
+        "class_name": "railway",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "wetland",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 4,
+        "recall": 0.9428571428571428,
+        "precision": 0.8918918918918919
+      }
+    ],
+    "resnet101_plus_both_d4": [
+      {
+        "class_name": "baseball_diamond",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "basketball_court",
+        "errors": 3,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9142857142857143,
+        "precision": 1.0
+      },
+      {
+        "class_name": "bridge",
+        "errors": 0,
+        "support": 34,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9714285714285714
+      },
+      {
+        "class_name": "church",
+        "errors": 8,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.7714285714285715,
+        "precision": 0.9642857142857143
+      },
+      {
+        "class_name": "cloud",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "commercial_area",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 1.0,
+        "precision": 0.9210526315789473
+      },
+      {
+        "class_name": "lake",
+        "errors": 4,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.8857142857142857,
+        "precision": 0.96875
+      },
+      {
+        "class_name": "medium_residential",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "overpass",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "palace",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 6,
+        "recall": 0.9714285714285714,
+        "precision": 0.85
+      },
+      {
+        "class_name": "railway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "railway_station",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 0.9714285714285714,
+        "precision": 1.0
+      },
+      {
+        "class_name": "rectangular_farmland",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 1.0,
+        "precision": 0.9459459459459459
+      },
+      {
+        "class_name": "roundabout",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "runway",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "sea_ice",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0
+      },
+      {
+        "class_name": "snowberg",
+        "errors": 0,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 1.0,
+        "precision": 0.9722222222222222
+      },
+      {
+        "class_name": "tennis_court",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 2,
+        "recall": 0.9714285714285714,
+        "precision": 0.9444444444444444
+      },
+      {
+        "class_name": "terrace",
+        "errors": 2,
+        "support": 35,
+        "false_positives": 1,
+        "recall": 0.9428571428571428,
+        "precision": 0.9705882352941176
+      },
+      {
+        "class_name": "wetland",
+        "errors": 1,
+        "support": 35,
+        "false_positives": 3,
+        "recall": 0.9714285714285714,
+        "precision": 0.918918918918919
+      }
+    ]
+  },
+  "paired": {
+    "stronger_none": {
+      "resnet101_fixes": 12,
+      "resnet101_breaks": 9,
+      "shared_errors": 12,
+      "oracle_NOT_ensemble": 0.9828326180257511
+    },
+    "old_ensemble_flips": {
+      "resnet101_fixes": 10,
+      "resnet101_breaks": 9,
+      "shared_errors": 12,
+      "oracle_NOT_ensemble": 0.9828326180257511
+    }
+  },
+  "resnet101_errors": [
+    {
+      "id": "32.jpg",
+      "true": "palace",
+      "predicted": "commercial_area",
+      "confidence": 0.9975662231445312,
+      "stronger_correct": true
+    },
+    {
+      "id": "1977.jpg",
+      "true": "basketball_court",
+      "predicted": "tennis_court",
+      "confidence": 0.995732843875885,
+      "stronger_correct": false
+    },
+    {
+      "id": "3201.jpg",
+      "true": "railway",
+      "predicted": "terrace",
+      "confidence": 0.5199941396713257,
+      "stronger_correct": true
+    },
+    {
+      "id": "3617.jpg",
+      "true": "church",
+      "predicted": "palace",
+      "confidence": 0.9995853304862976,
+      "stronger_correct": false
+    },
+    {
+      "id": "4329.jpg",
+      "true": "church",
+      "predicted": "commercial_area",
+      "confidence": 0.9999806880950928,
+      "stronger_correct": false
+    },
+    {
+      "id": "6146.jpg",
+      "true": "railway_station",
+      "predicted": "palace",
+      "confidence": 0.5972216129302979,
+      "stronger_correct": false
+    },
+    {
+      "id": "7548.jpg",
+      "true": "church",
+      "predicted": "commercial_area",
+      "confidence": 0.8599423766136169,
+      "stronger_correct": true
+    },
+    {
+      "id": "7790.jpg",
+      "true": "wetland",
+      "predicted": "lake",
+      "confidence": 0.88701331615448,
+      "stronger_correct": true
+    },
+    {
+      "id": "8698.jpg",
+      "true": "sea_ice",
+      "predicted": "wetland",
+      "confidence": 0.6921789646148682,
+      "stronger_correct": true
+    },
+    {
+      "id": "10003.jpg",
+      "true": "basketball_court",
+      "predicted": "terrace",
+      "confidence": 0.7200527787208557,
+      "stronger_correct": false
+    },
+    {
+      "id": "10127.jpg",
+      "true": "terrace",
+      "predicted": "rectangular_farmland",
+      "confidence": 0.9798693060874939,
+      "stronger_correct": false
+    },
+    {
+      "id": "10472.jpg",
+      "true": "church",
+      "predicted": "palace",
+      "confidence": 0.976123571395874,
+      "stronger_correct": true
+    },
+    {
+      "id": "10533.jpg",
+      "true": "wetland",
+      "predicted": "lake",
+      "confidence": 0.7048923969268799,
+      "stronger_correct": true
+    },
+    {
+      "id": "10647.jpg",
+      "true": "church",
+      "predicted": "palace",
+      "confidence": 0.9999998807907104,
+      "stronger_correct": false
+    },
+    {
+      "id": "11562.jpg",
+      "true": "palace",
+      "predicted": "commercial_area",
+      "confidence": 0.9872671961784363,
+      "stronger_correct": true
+    },
+    {
+      "id": "12223.jpg",
+      "true": "lake",
+      "predicted": "runway",
+      "confidence": 0.5669299364089966,
+      "stronger_correct": true
+    },
+    {
+      "id": "12301.jpg",
+      "true": "lake",
+      "predicted": "snowberg",
+      "confidence": 0.9999995231628418,
+      "stronger_correct": false
+    },
+    {
+      "id": "12684.jpg",
+      "true": "church",
+      "predicted": "commercial_area",
+      "confidence": 0.5553278923034668,
+      "stronger_correct": false
+    },
+    {
+      "id": "12850.jpg",
+      "true": "church",
+      "predicted": "palace",
+      "confidence": 0.9213988780975342,
+      "stronger_correct": false
+    },
+    {
+      "id": "13048.jpg",
+      "true": "lake",
+      "predicted": "wetland",
+      "confidence": 0.9585956335067749,
+      "stronger_correct": false
+    },
+    {
+      "id": "13473.jpg",
+      "true": "lake",
+      "predicted": "wetland",
+      "confidence": 0.9929950833320618,
+      "stronger_correct": false
+    }
+  ],
+  "new_resnet101_tta_computed": false,
+  "checkpoints": [
+    {
+      "kind": "best",
+      "epoch": 21,
+      "finite": true,
+      "head_shape": [
+        20,
+        2048
+      ]
+    },
+    {
+      "kind": "last",
+      "epoch": 25,
+      "finite": true,
+      "head_shape": [
+        20,
+        2048
+      ]
+    }
+  ],
+  "mixed_ensemble_vs_resnet101": {
+    "fixes": 5,
+    "breaks": 4,
+    "shared_errors": 16
+  }
+}
