@@ -18,7 +18,7 @@ from torch import nn
 from src.data import load_data, load_test
 from src.models import build_model
 from src.training.evaluate import evaluate_model
-from src.training.predict import prediction_table, save_submission
+from src.training.predict import prediction_table, probability_predictions, save_probabilities, save_submission
 from src.training.schedulers import make_scheduler, step_scheduler
 from src.training.train import train_model
 from src.utils import append_experiment, get_device, plot_history, set_seed, validate_journal
@@ -63,14 +63,19 @@ def make_optimizer(model, config):
     return constructors[name](parameters, **options)
 
 
-def load_checkpoint(checkpoint_path, device="auto", model_factory=None):
+def load_checkpoint(checkpoint_path, device="auto", model_factory=None, *, inference_only=False):
     """Restore the model and saved class order, without reading/fitting any dataset."""
     device = get_device(device)
     checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=True)
+    if inference_only:
+        checkpoint.pop("optimizer_state_dict", None)
+        checkpoint.pop("scheduler_state_dict", None)
     config = checkpoint["config"]
     model = build_model(config["model"], config["data"]["image_size"],
                         len(checkpoint["class_labels"]), model_factory, initialize_pretrained=False)
     model.load_state_dict(checkpoint["model_state_dict"])
+    if inference_only:
+        checkpoint.pop("model_state_dict")
     if hasattr(model, "set_epoch"):
         model.set_epoch(checkpoint["epoch"])
     model.to(device).eval()
@@ -214,11 +219,15 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
         best = torch.load(paths["models"] / "best.pt", map_location=device, weights_only=True)
         model.load_state_dict(best["model_state_dict"])
         model.eval()
-        prediction_table(model, val_loader, device, class_labels).to_csv(paths["predictions"] / "val.csv", index=False)
+        val_probabilities = probability_predictions(model, val_loader, device, class_labels)
+        val_probabilities.table().to_csv(paths["predictions"] / "val.csv", index=False)
+        save_probabilities(val_probabilities, paths["predictions"] / "val_probabilities.npz")
         submission_id = ""
         if predict_test:
             test_loader = load_test(data_dir, config["data"], config["seed"])
-            predictions = prediction_table(model, test_loader, device, class_labels)
+            test_probabilities = probability_predictions(model, test_loader, device, class_labels)
+            predictions = test_probabilities.table()
+            save_probabilities(test_probabilities, paths["predictions"] / "test_probabilities.npz")
             predictions.to_csv(paths["predictions"] / "test.csv", index=False)
             save_submission(predictions, data_dir / "sample_submission_example.csv", submission)
             submission_id = exp_id
