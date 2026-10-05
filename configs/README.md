@@ -1,5 +1,17 @@
 # Конфигурации экспериментов
 
+**Текущая серия — одна ResNet50, без ансамблей:** [план и критерии](../docs/resnet50_training_plan.md). Следующий запуск — `resnet50_partial_domain_shift_rrc.json`; затем отдельный smoothing, условно CutMix/CosFace, mining в резерве. Все25 эпох, partial, seed42; контроль — уже обученный stronger50,96.57%. Все пять сразу запускать не требуется. Удобный launcher/comparison: `07_resnet50_training_strategies.ipynb`;03 также переключён на RRC50. Ниже сохранены предыдущие конфигурации и история решений.
+
+| Новый конфиг | Что добавляет | Контроль |
+|---|---|---|
+| resnet50_partial_domain_shift_rrc.json | Train crop p0.5, площадь0.65–1, ratio0.9–1.1 | stronger50 |
+| resnet50_partial_rrc_smoothing.json | label_smoothing0.05 | RRC50 |
+| resnet50_partial_rrc_cutmix.json | CutMix p0.25, alpha1, max_area0.35, без smoothing | RRC50 |
+| resnet50_partial_domain_shift_cosface.json | Основной CE + вспомогательный CosFace | stronger50 |
+| resnet50_partial_domain_shift_hard_mining.json | Повтор5% hard train после5 эпох | stronger50 |
+
+Loss, mixing и mining задаются в `training`; `random_resized_crop` — в `data.augmentation`. CosFace требует `model.auxiliary_cosine_head=true`; дополнительная голова не используется при inference. Val всегда полный кадр и стандартный CE. Старые конфиги без новых ключей работают как раньше. CutMix+CosFace/mining в одном run не поддерживаются и дают явную ошибку.
+
 Все рецепты — стартовые гипотезы. Результаты завершённых MLP находятся в experiments.csv и findings.md; MLP-конфиги оставлены для истории.
 
 ## Текущие CNN, вход 256×256
