@@ -45,7 +45,7 @@ def read_classes(data_dir):
     return classes
 
 
-def make_loader(dataset, config, seed, shuffle=False):
+def make_loader(dataset, config, seed, shuffle=False, sampler=None):
     pin_memory = bool(config.get("pin_memory", False) and torch.cuda.is_available())
     num_workers = config.get("num_workers", 0)
     options = {}
@@ -57,14 +57,14 @@ def make_loader(dataset, config, seed, shuffle=False):
                 raise ValueError("prefetch_factor must be a positive integer")
             options["prefetch_factor"] = prefetch
     return DataLoader(
-        dataset, batch_size=config["batch_size"], shuffle=shuffle,
+        dataset, batch_size=config["batch_size"], shuffle=shuffle if sampler is None else False, sampler=sampler,
         num_workers=num_workers, pin_memory=pin_memory,
         worker_init_fn=seed_worker, generator=torch.Generator().manual_seed(seed),
         **options,
     )
 
 
-def load_data(data_dir, config, seed=42):
+def load_data(data_dir, config, seed=42, *, hard_mining=None):
     """Return train, val, classes; do not load test for training."""
     data_dir = Path(data_dir)
     classes = read_classes(data_dir)
@@ -72,7 +72,12 @@ def load_data(data_dir, config, seed=42):
     train_transform, val_transform = get_transforms(config)
     train = ImageDataset(data_dir / "train.csv", data_dir / "train", train_transform, mapping)
     val = ImageDataset(data_dir / "val.csv", data_dir / "val", val_transform, mapping)
-    return make_loader(train, config, seed, True), make_loader(val, config, seed), classes
+    sampler = None
+    if hard_mining is not None:
+        from src.training.mining import HardExampleSampler, IndexedDataset
+        sampler = HardExampleSampler(train, hard_mining, seed)
+        train = IndexedDataset(train)
+    return make_loader(train, config, seed, True, sampler), make_loader(val, config, seed), classes
 
 
 def load_test(data_dir, config, seed=42):
