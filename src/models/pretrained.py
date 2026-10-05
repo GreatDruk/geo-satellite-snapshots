@@ -1,7 +1,7 @@
 """Torchvision ResNets with explicit transfer-learning and BatchNorm policies."""
 from torch import nn
 
-from .pooling import replace_adaptive_pools
+from .pooling import replace_adaptive_pools, GlobalAverageMaxPool2d
 
 RESNET_ARCHITECTURES = {"resnet18", "resnet34", "resnet50", "resnet101", "resnet152"}
 
@@ -93,8 +93,15 @@ def build_pretrained(config, num_classes, initialize_pretrained=True):
         raise ValueError("Pretrained weights must be a named torchvision weight set")
     backbone, resolved_weights = load_backbone(architecture, weights_name,
                                                initialize_pretrained and config.get("pretrained", False))
+    pooling = config.get("pooling", "average")
+    if pooling not in {"average", "avgmax"}:
+        raise ValueError("ResNet pooling must be average or avgmax")
+    feature_count = backbone.fc.in_features
+    if pooling == "avgmax":
+        backbone.avgpool = GlobalAverageMaxPool2d()
+        feature_count *= 2
     backbone.fc = nn.Sequential(nn.Dropout(config.get("head_dropout", 0.3)),
-                                nn.Linear(backbone.fc.in_features, num_classes))
+                                nn.Linear(feature_count, num_classes))
     replace_adaptive_pools(backbone)
     model = TransferClassifier(backbone, config, architecture)
     model.weights_name = resolved_weights
