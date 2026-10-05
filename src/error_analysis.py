@@ -8,6 +8,154 @@ import pandas as pd
 from PIL import Image
 
 
+def validation_probabilities(project_root, experiment_id, *, raw_dir=None,
+                             probabilities_path=None, device="auto", batch_size=16,
+                             num_workers=0):
+    """Load full val probabilities; if absent infer best.pt on val only and cache.
+
+    Existing arrays are checked against current val IDs, targets and class labels.
+    An invalid cache is an error, never a reason to silently replace it.
+    """
+    from src.training.predict import load_probabilities, save_probabilities
+
+    root = Path(project_root).resolve()
+    raw = Path(raw_dir) if raw_dir is not None else root / "data/raw"
+    if not raw.is_absolute():
+        raw = root / raw
+    if not isinstance(experiment_id, str) or Path(experiment_id).name != experiment_id or experiment_id in {"", ".", ".."}:
+        raise ValueError("Use an experiment directory name, not a path")
+    path = (Path(probabilities_path) if probabilities_path is not None else
+            root / "artifacts/predictions" / experiment_id / "val_probabilities.npz")
+    if not path.is_absolute():
+        path = root / path
+    classes = pd.read_csv(raw / "classes.csv")
+    truth = pd.read_csv(raw / "val.csv", dtype={"id": str})
+    if truth.id.isna().any() or truth.id.duplicated().any() or classes.label.duplicated().any():
+        raise ValueError("Validation IDs and class labels must be unique and nonempty")
+    generated = False
+    if path.exists():
+        result = load_probabilities(path)
+        print(f"Loaded validation probabilities: {path}")
+    else:
+        from src.data import load_validation
+        from src.experiment import load_checkpoint
+        from src.training.predict import probability_predictions
+        from src.utils import get_device, set_seed
+
+        if batch_size < 1 or num_workers < 0:
+            raise ValueError("Positive batch_size and nonnegative num_workers required")
+        selected_device = get_device(device)
+        checkpoint_path = root / "artifacts/models" / experiment_id / "best.pt"
+        print(f"No probabilities found; validation-only inference on {selected_device}: {checkpoint_path}")
+        set_seed(42, deterministic=True, warn_only=True)
+        model, checkpoint = load_checkpoint(checkpoint_path, selected_device, inference_only=True)
+        config = dict(checkpoint["config"]["data"])
+        # Use the notebook's explicit data location, not a machine-specific saved path.
+        config.update(batch_size=batch_size, num_workers=num_workers,
+                      pin_memory=selected_device.type == "cuda")
+        if num_workers == 0:
+            config.pop("prefetch_factor", None)
+            config["persistent_workers"] = False
+        loader, _ = load_validation(raw, config, checkpoint["config"].get("seed", 42))
+        def progress(batch, total):
+            if batch == 1 or batch % 10 == 0 or batch == total:
+                print(f"Validation inference: {batch}/{total} batches", flush=True)
+        result = probability_predictions(model, loader, selected_device,
+                                         checkpoint["class_labels"], tta="none", progress=progress)
+        generated = True
+        del model, loader, checkpoint
+    result.validate()
+    if set(result.ids) != set(truth.id) or set(result.class_labels) != set(classes.label):
+        raise ValueError("Saved probabilities do not match validation IDs/classes")
+    if result.true_labels is None or not np.array_equal(
+            result.true_labels, truth.set_index("id").loc[result.ids, "label"].to_numpy()):
+        raise ValueError("Saved probability targets do not match raw validation")
+    if generated:
+        save_probabilities(result, path)
+        print(f"Saved validation probabilities: {path}")
+    return result, classes
+
+
+def probability_cases(predictions, classes, *, selection="errors", limit=None, top_k=5):
+    """Rank errors by confidence or all val images by smallest top1-top2 gap.
+
+    Includes the true-class probability/rank even when absent from top-k.
+    Returns one row per image; no ground truth is used for uncertainty ranking.
+    """
+    predictions.validate()
+    if predictions.true_labels is None:
+        raise ValueError("Validation ground truth is required")
+    if selection not in {"errors", "uncertain"} or not isinstance(top_k, int) or not 2 <= top_k <= len(predictions.class_labels):
+        raise ValueError("Choose errors/uncertain and top_k between 2 and class count")
+    if limit is not None and (not isinstance(limit, int) or limit < 1):
+        raise ValueError("limit must be None or a positive integer")
+    names = classes.set_index("label").class_name.to_dict()
+    if set(names) != set(predictions.class_labels):
+        raise ValueError("Class name mapping does not match probabilities")
+    p = predictions.probabilities
+    order = np.argsort(-p, axis=1, kind="stable")
+    rows = []
+    for i, image_id in enumerate(predictions.ids):
+        true_label = predictions.true_labels[i]
+        predicted = predictions.class_labels[order[i, 0]]
+        true_index = int(np.flatnonzero(predictions.class_labels == true_label)[0])
+        rows.append({"id": image_id, "true_class": names[true_label],
+                     "predicted_class": names[predicted], "correct": bool(predicted == true_label),
+                     "confidence": float(p[i, order[i, 0]]),
+                     "second_probability": float(p[i, order[i, 1]]),
+                     "margin": float(p[i, order[i, 0]] - p[i, order[i, 1]]),
+                     "true_probability": float(p[i, true_index]),
+                     "true_rank": int(np.flatnonzero(order[i] == true_index)[0]) + 1,
+                     "top_classes": [names[predictions.class_labels[j]] for j in order[i, :top_k]],
+                     "top_probabilities": [float(p[i, j]) for j in order[i, :top_k]]})
+    table = pd.DataFrame(rows)
+    if selection == "errors":
+        table = table.loc[~table.correct].sort_values("confidence", ascending=False, kind="stable")
+    else:
+        table = table.sort_values("margin", ascending=True, kind="stable")
+    return table.head(limit) if limit is not None else table
+
+
+def plot_probability_cases(cases, image_dir, title, *, page_size=6):
+    """Each case has an original image beside top-k horizontal probability bars."""
+    if not isinstance(page_size, int) or page_size < 1:
+        raise ValueError("page_size must be positive")
+    if cases.empty:
+        print(f"{title}: no images")
+        return []
+    directory = Path(image_dir).resolve()
+    def probability_text(value):
+        if 0 < value < .0001:
+            return f"{value * 100:.2e}%"
+        return f"{value:.6%}" if value >= .9999 else f"{value:.2%}"
+    figures = []
+    for start in range(0, len(cases), page_size):
+        page = cases.iloc[start:start + page_size]
+        fig, axes = plt.subplots(len(page), 2, figsize=(12, 3.5 * len(page)),
+                                 squeeze=False, gridspec_kw={"width_ratios": [1, 1.25]})
+        for (image_ax, bar_ax), row in zip(axes, page.itertuples()):
+            path = (directory / row.id).resolve()
+            if not path.is_relative_to(directory):
+                raise ValueError("Image ID escapes validation directory")
+            with Image.open(path) as source:
+                image_ax.imshow(source.convert("RGB"), interpolation="nearest")
+            image_ax.axis("off")
+            image_ax.set_title(f"{row.id} | {'CORRECT' if row.correct else 'ERROR'}\nTrue: {row.true_class}; predicted: {row.predicted_class}", fontsize=10)
+            colors = ["#238b45" if name == row.true_class else "#d95f02" if j == 0 else "#6c8ebf"
+                      for j, name in enumerate(row.top_classes)]
+            bars = bar_ax.barh(row.top_classes, row.top_probabilities, color=colors)
+            bar_ax.invert_yaxis()
+            bar_ax.set_xlim(0, 1.16)
+            bar_ax.set_xticks([0, .25, .5, .75, 1], ["0%", "25%", "50%", "75%", "100%"])
+            bar_ax.bar_label(bars, labels=[probability_text(v) for v in row.top_probabilities], padding=4)
+            bar_ax.set_title(f"Top1−top2: {row.margin:.4f} ({row.margin * 100:.2f} pp)\nTrue probability: {probability_text(row.true_probability)}; rank: {row.true_rank}", fontsize=10)
+        fig.suptitle(f"{title}: {start + 1}–{start + len(page)} / {len(cases)}")
+        fig.tight_layout(rect=(0, 0, 1, .975), h_pad=2)
+        plt.show()
+        figures.append(fig)
+    return figures
+
+
 def load_predictions(project_root, experiment_ids):
     """Align every experiment to raw val IDs and verify labels before comparison."""
     root = Path(project_root)
