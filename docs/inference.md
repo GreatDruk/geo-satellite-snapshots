@@ -39,7 +39,9 @@ result = run_validation_suite({
 }, "quality_with_resnet101_001", device="auto", cache_from="quality_inference_001")
 ```
 
-Включайте только существующие checkpoints. Аналогичные настройки есть в конце `05_error_analysis.ipynb`; по умолчанию он читает готовый локальный `quality_inference_001`, не повторяет inference. После Kaggle добавьте новый checkpoint, новый ID и включите `RUN_SUITE`.
+Включайте только существующие checkpoints. Аналогичные настройки есть в `06_tta_ensembles.ipynb`; по умолчанию он читает готовый локальный `quality_inference_001`, не повторяет inference. После Kaggle добавьте новый checkpoint, новый ID и включите `RUN_SUITE`.
+
+`05_error_analysis.ipynb` посвящён одной модели: ошибки с top-k вероятностями и все val-снимки с наименьшим разрывом top-1/top-2. Функция validation_probabilities читает val_probabilities.npz, проверяет IDs/classes/true labels; при отсутствии файла восстанавливает best.pt, выполняет inference без TTA только на val и сохраняет NPZ. Случайные train-аугментации не применяются, test и experiments.csv не используются. Если существующий файл не соответствует val, функция выдаёт ошибку вместо его замены. Если в ноутбуке задан нестандартный PROBABILITIES_PATH, пользователь отвечает за выбор соответствующего модели файла: NPZ проверяет данные, но не содержит hash весов.
 
 Suite создаёт отдельные `artifacts/logs/<ID>` и `artifacts/predictions/<ID>`: probabilities/scored CSV для каждого рецепта, inference.log, metadata.json с hashes/окружением/временем, comparison.csv и selection.json. Старые запуски не перезаписываются. Это inference-эксперимент, поэтому запись с вымышленным train_time в `experiments.csv` не добавляется; журнал оценок — comparison.csv.
 

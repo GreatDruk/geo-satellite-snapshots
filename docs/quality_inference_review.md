@@ -22,6 +22,6 @@ TTA для stronger отдельно проиграл: flips 25 ошибок, D4
 
 Исходные argmax обоих checkpoints совпали с сохранёнными CSV для всех 699 снимков. Проверены hashes checkpoint/val.csv/classes.csv, а также неизменность experiments.csv. В metadata.json добавлены hashes NPZ для безопасного cache. Результаты: comparison.csv, probabilities/scored CSV, selection.json, selected_class_metrics.csv и selected_confusions.csv в inference-артефактах. Новые обучения автоматически сохраняют probabilities.
 
-В 05_error_analysis.ipynb сохранены таблица результатов, per-class metrics, confidence/margin, галерея ошибок выбранного рецепта и список регрессий против stronger. 99_final_pipeline.ipynb применяет manifest; test по умолчанию выключен.
+В 06_tta_ensembles.ipynb сохранены таблица результатов, per-class metrics, confidence/margin, галерея ошибок выбранного рецепта и список регрессий против stronger. 99_final_pipeline.ipynb применяет manifest; test по умолчанию выключен.
 
 Следующий обязательный новый запуск: configs/resnet101_partial_domain_shift_stronger.json, выбранный в 03_pretrained.ipynb. После него добавить best.pt в CHECKPOINTS и новый inference ID: существующие probabilities переиспользуются через cache_from. Будут оценены одиночные, парные и общий равновесные ансамбли. Специалист зданий остаётся резервным вторым обучением по результатам ResNet101, а не обязательным запуском сейчас.
