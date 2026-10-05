@@ -1,6 +1,13 @@
 """Avoid CUDA adaptive-average-pool backward when an equivalent regular pool exists."""
 from torch import nn
 from torch.nn import functional as F
+import torch
+
+
+class GlobalAverageMaxPool2d(nn.Module):
+    """Concatenate spatial mean and max; one backbone forward, twice the features."""
+    def forward(self, x):
+        return torch.cat([x.mean(dim=(-2,-1),keepdim=True), x.amax(dim=(-2,-1),keepdim=True)],dim=1)
 
 
 class CompatibleAdaptiveAvgPool2d(nn.AdaptiveAvgPool2d):
