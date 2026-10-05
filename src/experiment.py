@@ -130,7 +130,16 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
         data_dir = root / data_dir
     train_loader, val_loader, classes = load_data(data_dir, config["data"], config["seed"])
     class_labels = classes.label.tolist()
-    model = build_model(config["model"], config["data"]["image_size"], len(classes), model_factory).to(device)
+    initializer = training.get("initialize_from")
+    model = build_model(config["model"], config["data"]["image_size"], len(classes), model_factory,
+                        initialize_pretrained=not bool(initializer)).to(device)
+    initialization_metadata = None
+    if initializer:
+        from src.models.initialization import initialize_from_checkpoint
+        initial_path = Path(initializer)
+        if not initial_path.is_absolute():
+            initial_path = root / initial_path
+        initialization_metadata = initialize_from_checkpoint(model, initial_path, classes.label.tolist(), config["data"])
     if config["model"].get("warmup_epochs", 0) >= epochs:
         raise ValueError("warmup_epochs must be smaller than training.epochs")
     if hasattr(model, "weights_name") and config["model"].get("pretrained", False):
@@ -163,7 +172,8 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
                 "deterministic_warn_only": training.get("deterministic_warn_only", False),
                 "parameters": sum(p.numel() for p in model.parameters()),
                 "trainable_parameters": sum(p.numel() for p in model.parameters() if p.requires_grad),
-                "class_labels": class_labels, "class_names": classes.class_name.tolist()}
+                "class_labels": class_labels, "class_names": classes.class_name.tolist(),
+                "initialization": initialization_metadata}
     (paths["logs"] / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     rows, best_accuracy, best_epoch = [], -1.0, 0
     started = time.perf_counter()
