@@ -80,3 +80,13 @@ def load_test(data_dir, config, seed=42):
     _, transform = get_transforms(config)
     dataset = ImageDataset(data_dir / "test.csv", data_dir / "test", transform)
     return make_loader(dataset, config, seed)
+
+
+def load_validation(data_dir, config, seed=42):
+    """Inference-only validation loading: no train/test access or fitting."""
+    data_dir = Path(data_dir)
+    classes = read_classes(data_dir)
+    _, transform = get_transforms(config)
+    mapping = {label: index for index, label in enumerate(classes.label.tolist())}
+    dataset = ImageDataset(data_dir / "val.csv", data_dir / "val", transform, mapping)
+    return make_loader(dataset, config, seed), classes
