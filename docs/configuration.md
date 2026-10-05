@@ -173,3 +173,16 @@ result = run_experiment(config, exp_id="cnn_256_step_001")
 ```
 
 Для нескольких экспериментов лучше сохранять отдельные JSON-файлы. Каждый фактически использованный конфиг автоматически копируется в artifacts/logs/<exp_id>/config.json. Названия scheduler можно также записывать как steplr, cosineannealinglr, reducelronplateau; регистр имени не важен.
+# Новые train-стратегии ResNet50 (2026-10-06)
+
+К старым конфигурациям можно добавить `data.augmentation.random_resized_crop={"p":0.5,"scale":[0.65,1.0],"ratio":[0.9,1.1]}`. Scale — доля **площади**, crop применяется до resize в256, только на train. Нормализация после аугментаций прежняя.
+
+`training.loss={"name":"cross_entropy","label_smoothing":0.05}` меняет только train-loss; val-loss остаётся обычным CE.
+
+`training.batch_augmentation={"name":"cutmix","p":0.25,"alpha":1.0,"max_area":0.35}` включает вставку patch на train-батчах. Target-вес — фактическая доля площади после clipping; p — вероятность для батча, а не изображения. Max_area ограничивает запрошенную площадь. Смешанные targets совместимы с CE/smoothing, но не с текущими CosFace/mining.
+
+`model.auxiliary_cosine_head=true` вместе с `training.loss={"name":"ce_cosface","label_smoothing":0,"margin":0.15,"scale":16,"weight":0.2}` включает CE+auxiliary CosFace. Margin уменьшает cosine-score истинного класса перед train-softmax, scale масштабирует auxiliary scores, weight задаёт вклад дополнительного loss. Inference использует основную CE-голову без margin и без labels. Эта дополнительная голова сохраняется в checkpoint и восстанавливается автоматически.
+
+`training.hard_mining={"warmup_epochs":5,"repeat_fraction":0.05}` добавляет к каждому полному train-epoch небольшое число трудных примеров предыдущей эпохи. Warmup здесь означает задержку **sampling**, отдельно от model.warmup_epochs. Параметры и per-ID margins сохраняются; val/test в выборе не участвуют.
+
+Если ключей нет, исходное поведение сохраняется. План и самостоятельные конфиги: [resnet50_training_plan.md](resnet50_training_plan.md). Далее — исходная документация сборки моделей.
