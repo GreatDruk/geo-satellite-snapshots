@@ -194,8 +194,14 @@ def run_selected_inference(selection, run_id, *, split="val", project_root=PROJE
     root = Path(project_root).resolve()
     if not isinstance(selection, dict):
         selection = json.loads(_resolve(root, selection).read_text(encoding="utf-8"))
-    if selection.get("format_version") != 1 or selection.get("selected_on") != "val" or not selection.get("members"):
-        raise ValueError("Expected a version 1 recipe selected on val")
+    if selection.get("format_version") not in {1, 2} or selection.get("selected_on") != "val" or not selection.get("members"):
+        raise ValueError("Expected a supported recipe selected on val")
+    local_recipe = selection.get("format_version") == 2
+    if local_recipe and (selection.get("method") != "global_local" or len(selection["members"]) != 1
+                         or selection.get("local_pool") not in {"mean", "max"}
+                         or not 0 <= selection.get("global_weight", -1) <= 1
+                         or not isinstance(selection.get("crop_size"), int) or selection["crop_size"] <= 0):
+        raise ValueError("Invalid global/local recipe")
     paths = _paths(root, run_id)
     submission = root / "submissions" / f"{run_id}.csv"
     if split == "test" and submission.exists():
@@ -214,11 +220,20 @@ def run_selected_inference(selection, run_id, *, split="val", project_root=PROJE
         if set(checkpoint["class_labels"]) != set(selection["class_labels"]):
             raise ValueError("Checkpoint classes do not match selection")
         data_config = _data_config(checkpoint, device, batch_size, num_workers)
-        if split == "val":
+        if local_recipe:
+            from src.local_inference import local_loader, local_probability_predictions
+            loader = local_loader(raw, data_config, checkpoint["class_labels"], split=split,
+                                  crop_size=selection["crop_size"], batch_size=batch_size,
+                                  num_workers=num_workers, device=device)
+        elif split == "val":
             loader, _ = load_validation(raw, data_config, checkpoint["config"]["seed"])
         else:
             loader = load_test(raw, data_config, checkpoint["config"]["seed"])
-        predictions.append(probability_predictions(model, loader, device, checkpoint["class_labels"], tta=member["tta"]))
+        if local_recipe:
+            predictions.append(local_probability_predictions(model, loader, device, checkpoint["class_labels"],
+                               method=selection["local_pool"], global_weight=selection["global_weight"]))
+        else:
+            predictions.append(probability_predictions(model, loader, device, checkpoint["class_labels"], tta=member["tta"]))
         del model, loader, checkpoint
     result = ensemble_probabilities(predictions, [member["weight"] for member in selection["members"]])
     for path in paths.values():
