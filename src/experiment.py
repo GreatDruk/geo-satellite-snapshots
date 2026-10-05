@@ -21,6 +21,9 @@ from src.training.evaluate import evaluate_model
 from src.training.predict import prediction_table, probability_predictions, save_probabilities, save_submission
 from src.training.schedulers import make_scheduler, step_scheduler
 from src.training.train import train_model
+from src.training.losses import CEWithCosFace, make_training_loss
+from src.training.mixing import CutMix
+from src.training.mining import HardExampleSampler
 from src.utils import append_experiment, get_device, plot_history, set_seed, validate_journal
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -97,6 +100,15 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
         raise ValueError("exp_id: 1-80 letters, digits, underscores or hyphens")
     config["exp_id"] = exp_id
     training = config["training"]
+    train_criterion = make_training_loss(training.get("loss"))
+    validation_criterion = nn.CrossEntropyLoss()
+    batch_augmentation = CutMix(training["batch_augmentation"]) if "batch_augmentation" in training else None
+    mining_config = training.get("hard_mining")
+    uses_margin = isinstance(train_criterion, CEWithCosFace)
+    if bool(config["model"].get("auxiliary_cosine_head", False)) != uses_margin:
+        raise ValueError("ce_cosface and model.auxiliary_cosine_head=true must be configured together")
+    if batch_augmentation is not None and batch_augmentation.p > 0 and (uses_margin or mining_config is not None):
+        raise ValueError("CutMix cannot be combined with CosFace or hard mining; run separate experiments")
     epochs, log_every = training["epochs"], training.get("log_every", 1)
     if not isinstance(epochs, int) or epochs <= 0 or not isinstance(log_every, int) or log_every <= 0:
         raise ValueError("epochs and log_every must be positive integers")
@@ -128,7 +140,10 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
     data_dir = Path(config["data"].get("raw_dir", "data/raw"))
     if not data_dir.is_absolute():
         data_dir = root / data_dir
-    train_loader, val_loader, classes = load_data(data_dir, config["data"], config["seed"])
+    train_loader, val_loader, classes = load_data(data_dir, config["data"], config["seed"], hard_mining=mining_config)
+    mining = train_loader.sampler if isinstance(train_loader.sampler, HardExampleSampler) else None
+    if mining is not None and mining.warmup >= epochs:
+        raise ValueError("hard_mining.warmup_epochs must be smaller than training.epochs")
     class_labels = classes.label.tolist()
     initializer = training.get("initialize_from")
     model = build_model(config["model"], config["data"]["image_size"], len(classes), model_factory,
@@ -144,7 +159,8 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
         raise ValueError("warmup_epochs must be smaller than training.epochs")
     if hasattr(model, "weights_name") and config["model"].get("pretrained", False):
         config["model"]["weights"] = model.weights_name
-    criterion = nn.CrossEntropyLoss()
+    if uses_margin and (not hasattr(model, "forward_with_auxiliary") or not hasattr(model, "auxiliary_head")):
+        raise ValueError("ce_cosface requires a ResNet with an auxiliary cosine head")
     optimizer = make_optimizer(model, training["optimizer"])
     scheduler, scheduler_monitor = make_scheduler(optimizer, training.get("scheduler"), epochs)
     # Catch factory/shape errors before creating any run artifacts.
@@ -173,6 +189,11 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
                 "parameters": sum(p.numel() for p in model.parameters()),
                 "trainable_parameters": sum(p.numel() for p in model.parameters() if p.requires_grad),
                 "class_labels": class_labels, "class_names": classes.class_name.tolist(),
+                "train_loss": training.get("loss", {"name": "cross_entropy", "label_smoothing": 0.0}),
+                "validation_loss": "unsmoothed_cross_entropy_on_main_logits",
+                "train_accuracy_kind": "cutmix_area_weighted" if batch_augmentation is not None and batch_augmentation.p > 0 else "hard_target",
+                "batch_augmentation": training.get("batch_augmentation"),
+                "hard_mining": mining_config,
                 "initialization": initialization_metadata}
     (paths["logs"] / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     rows, best_accuracy, best_epoch = [], -1.0, 0
@@ -196,13 +217,18 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
             epoch_started = time.perf_counter()
             if hasattr(model, "set_epoch"):
                 model.set_epoch(epoch)
+            if mining is not None:
+                mining.set_epoch(epoch)
             learning_rate = optimizer.param_groups[0]["lr"]
             learning_rates = {group.get("name", str(i)): group["lr"] for i, group in enumerate(optimizer.param_groups)}
             train_started = time.perf_counter()
-            train_loss, train_accuracy = train_model(model, train_loader, criterion, optimizer, device)
+            train_loss, train_accuracy = train_model(model, train_loader, train_criterion, optimizer, device,
+                                                     batch_augmentation=batch_augmentation)
+            if mining is not None:
+                mining.finish_epoch().to_csv(paths["logs"] / f"hard_examples_epoch_{epoch:03d}.csv", index=False)
             train_time_sec = time.perf_counter() - train_started
             val_started = time.perf_counter()
-            val_loss, val_accuracy = evaluate_model(model, val_loader, criterion, device)
+            val_loss, val_accuracy = evaluate_model(model, val_loader, validation_criterion, device)
             val_time_sec = time.perf_counter() - val_started
             step_scheduler(scheduler, scheduler_monitor, {"val_loss": val_loss, "val_accuracy": val_accuracy})
             rows.append({"epoch": epoch, "train_loss": train_loss, "train_accuracy": train_accuracy,
@@ -212,6 +238,8 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
                          "learning_rates": json.dumps(learning_rates),
                          "next_learning_rates": json.dumps({g.get("name", str(i)): g["lr"] for i, g in enumerate(optimizer.param_groups)}),
                          "training_mode": getattr(model, "active_mode", "full"),
+                         "train_samples": len(train_loader.dataset) if mining is None else len(mining),
+                         "hard_repeats": len(mining) - len(mining.dataset) if mining is not None else 0,
                          "train_time_sec": train_time_sec,
                          "val_time_sec": val_time_sec,
                          "epoch_time_sec": time.perf_counter() - epoch_started})
