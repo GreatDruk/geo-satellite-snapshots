@@ -27,9 +27,10 @@ def _interval(value, name, low=0, high=math.inf, integer=False):
 
 
 class ImageTransform:
-    """Preserve the full frame; stochastic operations are enabled only on train."""
+    """Resize the full frame by default; optional crop and randomness are train-only."""
 
     OPERATIONS = {
+        "random_resized_crop": {"p", "scale", "ratio"},
         "color_jitter": {"p", "brightness", "contrast", "saturation", "hue"},
         "gamma": {"p", "range"},
         "gaussian_noise": {"p", "std"},
@@ -80,6 +81,11 @@ class ImageTransform:
             if name == "color_jitter":
                 for key in ("brightness", "contrast", "saturation", "hue"):
                     _number(spec.get(key, 0), key, 0, 0.5 if key == "hue" else 1)
+            elif name == "random_resized_crop":
+                scale = _interval(spec.get("scale", [0.65, 1.0]), "random_resized_crop.scale", 0.001, 1)
+                _interval(spec.get("ratio", [0.9, 1.1]), "random_resized_crop.ratio", 0.001, 100)
+                if scale[0] <= 0:
+                    raise ValueError("Crop area must be positive")
             else:
                 key, default, low, high, integer = self.RANGES[name]
                 _interval(spec.get(key, default), f"{name}.{key}", low, high, integer)
@@ -109,9 +115,38 @@ class ImageTransform:
                 image = enhancer(image).enhance(random.uniform(1 - amount, 1 + amount))
         return image
 
+    def _crop(self, image):
+        """Sample area/aspect ratio as in RandomResizedCrop, before final resize."""
+        spec = self.augmentation["random_resized_crop"]
+        width, height = image.size
+        area = width * height
+        scale = spec.get("scale", [0.65, 1.0])
+        ratio = spec.get("ratio", [0.9, 1.1])
+        for _ in range(10):
+            target_area = area * random.uniform(*scale)
+            aspect = math.exp(random.uniform(math.log(ratio[0]), math.log(ratio[1])))
+            crop_width = round(math.sqrt(target_area * aspect))
+            crop_height = round(math.sqrt(target_area / aspect))
+            if 0 < crop_width <= width and 0 < crop_height <= height:
+                left = random.randint(0, width - crop_width)
+                top = random.randint(0, height - crop_height)
+                return image.crop((left, top, left + crop_width, top + crop_height))
+        # Deterministic central fallback, matching the aspect-ratio constraint.
+        aspect = width / height
+        if aspect < ratio[0]:
+            crop_width, crop_height = width, min(height, round(width / ratio[0]))
+        elif aspect > ratio[1]:
+            crop_height, crop_width = height, min(width, round(height * ratio[1]))
+        else:
+            crop_width, crop_height = width, height
+        left, top = (width - crop_width) // 2, (height - crop_height) // 2
+        return image.crop((left, top, left + crop_width, top + crop_height))
+
     def __call__(self, image):
         image = image.convert("RGB")
         target_size = (self.size[1], self.size[0])
+        if self._enabled("random_resized_crop"):
+            image = self._crop(image)
         if image.size != target_size:
             image = image.resize(target_size, Image.Resampling.BILINEAR)
         for key, operation in (("horizontal_flip", Image.Transpose.FLIP_LEFT_RIGHT), ("vertical_flip", Image.Transpose.FLIP_TOP_BOTTOM)):
