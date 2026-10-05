@@ -92,3 +92,11 @@ result = run_experiment("configs/resnet18_partial.json", exp_id="resnet18_partia
 На CPU pin_memory автоматически выключается; на Windows также устанавливается num_workers=0. Эти фактические настройки сохраняются в конфиге запуска. При явном device=cuda отсутствие CUDA по-прежнему считается ошибкой; для переносимого запуска используйте auto.
 
 Проверка первых завершённых MLP, анализ возможных накладных расходов GPU и настройка загрузчиков для следующих CNN/ResNet: [mlp_review.md](mlp_review.md).
+
+## Average+Max и fine-tuning собственных checkpoints
+
+`model.pooling` принимает `average` (старое поведение) или `avgmax`. Второй вариант объединяет spatial mean/max и удваивает число признаков головы; backbone делает один forward.
+
+`training.initialize_from` — путь к своему обученному checkpoint относительно PROJECT_ROOT. Pipeline не скачивает ImageNet при такой инициализации. Проверяются архитектура, порядок классов, image_size и normalization. Поддержан перенос average→avgmax: вес новой головы равен `[W_old, 0]`, bias сохраняется, поэтому начальные eval-logits совпадают с исходными. Это новый fine-tuning с новым optimizer/scheduler, не продолжение старого optimizer-state. SHA256 и эпоха источника сохраняются в metadata.json; raw, источник и старый experiments.csv не переписываются.
+
+При последующем load_checkpoint нового результата initialize_from не читается: новый best.pt содержит все нужные веса и конфиг. Исходный checkpoint нужен для начала fine-tuning, но не для будущего inference этого результата. Local tests проверяют эквивалентность logits, градиенты max-ветви, журнал и восстановление после удаления источника в синтетическом проекте.
