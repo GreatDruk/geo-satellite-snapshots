@@ -1,5 +1,9 @@
 # Kaggle Week 5 — Object classification from geo-satellite snapshots
 
+Следующий единственный LGFFE run: [13_lgffe_robust_domain_shift.ipynb](notebooks/13_lgffe_robust_domain_shift.ipynb), [конфиг Robust AugMix + MixStyle](configs/resnet50_lgffe_robust_augmix_mixstyle.json). D4 + custom AugMix(no-JSD) заменяют stronger corruption pipeline; MixStyle после layer1/layer2. [Описание, preview и проверки](docs/lgffe_robust_recipe.md). Обучение выключено; preview train уже выполнен.
+
+Подготовлен отдельный эксперимент [ResNet50 + LGFFE](notebooks/12_resnet50_lgffe.ipynb): GRU-based regional attention, global/local fusion, stronger domain_shift и random D4. [Конфиг](configs/resnet50_lgffe_domain_shift_stronger.json), [архитектура и запуск](docs/lgffe_experiment.md). Обучение пока не выполнено; в notebook оно выключено по умолчанию.
+
 Анализ test и public scores: лучший результат — **ансамбль train+val, 95.370%**; train-only ансамбль — 95.111%. В [11_test_prediction_analysis.ipynb](notebooks/11_test_prediction_analysis.ipynb) уже выполнен просмотр случайных, неуверенных и спорных изображений с вероятностями. [Выводы и инструкция](docs/test_prediction_analysis_review.md). Scores внесены в experiments.csv. Ниже — история.
 
 Четыреtest submissions suite `submissions_001` уже созданы и проверены: [аудит](docs/test_submissions_review.md). CUDA inference14.06мин; всеCSV содержат8299строк и лежат вsubmissions/. Вероятности/логи/таблица согласованы. Повторно запускать дляполученияэтихжеCSV не требуется; scores Kaggle пока не внесены. Ниже — история.
