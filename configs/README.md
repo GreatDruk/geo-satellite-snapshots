@@ -1,5 +1,9 @@
 # Конфигурации экспериментов
 
+**Актуально:** cheap frozen experiments выполнены в08, лучший pipeline679/699. [Отчёт](../docs/frozen_experiments_review.md). Подготовлены `resnet50_final_train_val.json` (20эпох) и `resnet101_final_train_val.json` (21): partial+stronger, fixed epochs, cosine T_max25, seed42. Train+val разрешён пользователем. Запускать **run_final_refit / notebook09**, а не run_experiment: нет held-out val/выбораbest. Для двухмодельного финала нужны оба refit, для single101 только101. Дополнительный full не следующий эксперимент; JSON сохранён как история. Ниже — прошлые решения.
+
+**Итог smoothing/CosFace/mining:** ни один не улучшилstronger50(675/699). [Отчёт](../docs/resnet50_strategies_review.md). Подготовлен один новый необязательный контроль `resnet50_full_domain_shift_stronger.json`: тот жеstronger-рецепт, толькоpartial→full, безновогоloss/crop/mining. Старыйfull имелтолькоflips.07 теперь открывается с `RUN_TRAINING=False` для анализа completedruns. Новые результатыfull+stronger отсутствуют; прежние инструкции ниже — история.
+
 **После завершённого RRC50:**95.14% хужеstronger50(96.57%); [аудит](../docs/resnet50_rrc_review.md). Следующий отдельный конфиг — `resnet50_partial_domain_shift_smoothing.json` (тот же stronger, только smoothing0.05, безcrop). RRC+smoothing/CutMix пока не рекомендованы к запуску; прежние JSON сохранены.
 
 **Текущая серия — одна ResNet50, без ансамблей:** [план и критерии](../docs/resnet50_training_plan.md). Следующий запуск — `resnet50_partial_domain_shift_rrc.json`; затем отдельный smoothing, условно CutMix/CosFace, mining в резерве. Все25 эпох, partial, seed42; контроль — уже обученный stronger50,96.57%. Все пять сразу запускать не требуется. Удобный launcher/comparison: `07_resnet50_training_strategies.ipynb`;03 также переключён на RRC50. Ниже сохранены предыдущие конфигурации и история решений.
