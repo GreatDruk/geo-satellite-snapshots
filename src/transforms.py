@@ -26,6 +26,17 @@ def _interval(value, name, low=0, high=math.inf, integer=False):
     return tuple(value)
 
 
+def apply_d4(image, index):
+    """One of eight exact pixel permutations: quarter-turns, then optional H flip."""
+    if isinstance(index, bool) or not isinstance(index, int) or not 0 <= index < 8:
+        raise ValueError("D4 index must be an integer from 0 to 7")
+    turns, flip = index % 4, index // 4
+    if turns:
+        image = image.transpose((Image.Transpose.ROTATE_90, Image.Transpose.ROTATE_180,
+                                 Image.Transpose.ROTATE_270)[turns - 1])
+    return image.transpose(Image.Transpose.FLIP_LEFT_RIGHT) if flip else image
+
+
 class ImageTransform:
     """Resize the full frame by default; optional crop and randomness are train-only."""
 
@@ -60,12 +71,26 @@ class ImageTransform:
         augmentation = config.get("augmentation", {})
         if not isinstance(augmentation, dict):
             raise ValueError("augmentation must be an object")
-        allowed = set(self.OPERATIONS) | {"horizontal_flip", "vertical_flip", "rotation_degrees", "random_rotate90", "corruption_probability", "max_corruptions"}
+        allowed = set(self.OPERATIONS) | {"horizontal_flip", "vertical_flip", "rotation_degrees", "random_rotate90", "random_d4", "robust_augmix", "corruption_probability", "max_corruptions"}
         if set(augmentation) - allowed:
             raise ValueError(f"Unsupported augmentations: {set(augmentation) - allowed}")
+        robust_augmix = None
+        if "robust_augmix" in augmentation:
+            from src.robust_augmix import RobustAugMix
+            if set(augmentation) - {"random_d4", "robust_augmix"}:
+                raise ValueError("Robust AugMix replaces legacy augmentations; only random_d4 may accompany it")
+            robust_augmix = RobustAugMix(augmentation["robust_augmix"])
         for key in ("horizontal_flip", "vertical_flip", "random_rotate90", "corruption_probability"):
             _number(augmentation.get(key, 1 if key == "corruption_probability" else 0), key, 0, 1)
         _number(augmentation.get("rotation_degrees", 0), "rotation_degrees", 0, 180)
+        if not isinstance(augmentation.get("random_d4", False), bool):
+            raise ValueError("random_d4 must be boolean")
+        if augmentation.get("random_d4", False):
+            if self.size[0] != self.size[1]:
+                raise ValueError("random_d4 requires square image_size")
+            if any(augmentation.get(key, 0) for key in
+                   ("horizontal_flip", "vertical_flip", "random_rotate90", "rotation_degrees")):
+                raise ValueError("random_d4 replaces the other flip/rotation settings")
         if augmentation.get("random_rotate90", 0) and self.size[0] != self.size[1]:
             raise ValueError("random_rotate90 requires square image_size")
         budget = augmentation.get("max_corruptions", len(self.CORRUPTIONS))
@@ -90,6 +115,7 @@ class ImageTransform:
                 key, default, low, high, integer = self.RANGES[name]
                 _interval(spec.get(key, default), f"{name}.{key}", low, high, integer)
         self.augmentation = augmentation if training else {}
+        self.robust_augmix = robust_augmix if training else None
 
     def _enabled(self, name):
         probability = self.augmentation.get(name, {}).get("p", 0)
@@ -149,6 +175,10 @@ class ImageTransform:
             image = self._crop(image)
         if image.size != target_size:
             image = image.resize(target_size, Image.Resampling.BILINEAR)
+        if self.augmentation.get("random_d4", False):
+            image = apply_d4(image, random.randrange(8))
+        if self.robust_augmix is not None:
+            image = self.robust_augmix(image)
         for key, operation in (("horizontal_flip", Image.Transpose.FLIP_LEFT_RIGHT), ("vertical_flip", Image.Transpose.FLIP_TOP_BOTTOM)):
             if self.augmentation.get(key, 0) and random.random() < self.augmentation[key]:
                 image = image.transpose(operation)
