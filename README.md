@@ -2,6 +2,8 @@
 
 Классификация спутниковых изображений на 20 классов; метрика — Accuracy. Train содержит 4999 изображений, val — 699, test — 8299. Ограничения соревнования и накопленные выводы хранятся в `findings.md`.
 
+После первого запуска новой серии RRC50 оказался хуже:95.14% против96.57% stronger50; [проверка](docs/resnet50_rrc_review.md). Следующий отдельный fallback — `configs/resnet50_partial_domain_shift_smoothing.json` (smoothing0.05, безcrop), выбран в03/07. Ниже первоначальное описание серии; RRC+smoothing/CutMix сейчас отложены.
+
 Текущий этап — улучшение **одной ResNet50**: [план](docs/resnet50_training_plan.md), launcher и сравнение в `notebooks/07_resnet50_training_strategies.ipynb`. Первый конфиг — `resnet50_partial_domain_shift_rrc.json`; отдельные smoothing/CutMix/CosFace/mining подготовлены как следующие условные эксперименты. Контроль — сохранённая одиночная stronger50,96.57%; новые результаты ещё не получены.
 
 ## Структура
