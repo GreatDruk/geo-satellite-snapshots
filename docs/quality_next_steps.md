@@ -1,5 +1,9 @@
 # Следующие шаги: качество при небольшом числе обучений
 
+**Актуально:** fixed ensembles и frozen pairwise logistic выполнены, без нового обучения нейросети. Никто не превзошёл101+50D4=679/699; reranker677. [Отчёт](frozen_experiments_review.md), notebook08. Full-контроль отменён. Train+val final refit разрешён пользователем; notebook09 и partial+stronger final presets готовы, нейросети ещё не переобучались. Следующий тяжёлый этап — финальный refit выбранного рецепта. Далее — история.
+
+**Текущий итог:** smoothing672, CosFace674, mining672 противstronger675/699. [Полный аудит](resnet50_strategies_review.md). Новыеloss/mining не объединяем; сохраняемstronger. Один возможный ещё не выполненный контроль — `resnet50_full_domain_shift_stronger.json` (full+тежеаугментации).07 анализируетcompletedruns безобучения по умолчанию. Финальныйtrain+val зависитотправил, сейчаснеиспользуется. Ниже — прошлые этапы.
+
 **Последнее обновление:** RRC50 завершён корректно, но665/699 хуже675/699 stronger50. Crop-ветка остановлена; следующий fallback — smoothing0.05 наstronger50 безcrop. [Аудит](resnet50_rrc_review.md); готов `resnet50_partial_domain_shift_smoothing.json`, выбран в03/07. Ниже — предыдущие этапы.
 
 **2026-10-06: направление пересмотрено по решению пользователя.** Улучшаем одну ResNet50: RRC → отдельный smoothing → условно CutMix/CosFace; hard mining в резерве. Специалист и ансамбли больше не следующий шаг. Реализации и5 конфигов готовы, обучение ещё не выполнено. [Актуальный план](resnet50_training_plan.md), notebook07. Далее — история.
