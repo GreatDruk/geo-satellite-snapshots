@@ -1,6 +1,10 @@
 # Kaggle Week 5 — Object classification from geo-satellite snapshots
 
+Актуальный этап: [08_frozen_pairwise_experiments.ipynb](notebooks/08_frozen_pairwise_experiments.ipynb) содержит выполненные фиксированные ансамбли и frozen logistic reranker. Ни один не превзошёл101+50D4 (679/699). [Отчёт](docs/frozen_experiments_review.md). Финальный train+val разрешён пользователем: [09_final_refit.ipynb](notebooks/09_final_refit.ipynb), presets50/101, RUN_REFIT=False. Бывшаяval после refit не служит метрикой/выборомcheckpoint. Full-контроль больше не предлагается. Далее — история.
+
 Классификация спутниковых изображений на 20 классов; метрика — Accuracy. Train содержит 4999 изображений, val — 699, test — 8299. Ограничения соревнования и накопленные выводы хранятся в `findings.md`.
+
+Последний результат серии50: stronger675/699 остаётсялучшим, smoothing672/CosFace674/mining672. [Аудит и выводы](docs/resnet50_strategies_review.md).07 сравниваетсохранённыеruns при `RUN_TRAINING=False`. Если продолжать обучение, подготовлен одинfull+stronger контроль: `configs/resnet50_full_domain_shift_stronger.json`; результат ещё не получен. Далее — история предыдущих этапов.
 
 После первого запуска новой серии RRC50 оказался хуже:95.14% против96.57% stronger50; [проверка](docs/resnet50_rrc_review.md). Следующий отдельный fallback — `configs/resnet50_partial_domain_shift_smoothing.json` (smoothing0.05, безcrop), выбран в03/07. Ниже первоначальное описание серии; RRC+smoothing/CutMix сейчас отложены.
 
