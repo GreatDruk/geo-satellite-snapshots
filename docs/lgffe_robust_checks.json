@@ -1,0 +1,41 @@
+{
+  "kind": "synthetic_checks_only",
+  "real_training_performed": false,
+  "test_read": false,
+  "recipe": "resnet50_lgffe_robust_augmix_mixstyle_001",
+  "tests": {
+    "run": 33,
+    "passed": 32,
+    "skipped_cuda_only": 1
+  },
+  "real_torchvision_resnet50_geometry_checked": true,
+  "forward_backward_checked": true,
+  "augmix_formula_and_corruptions_checked": true,
+  "mixstyle_train_eval_and_content_checked": true,
+  "frozen_bn_partial_warmup_checkpoint_inference_checked": true,
+  "notebook_preview_executed": true,
+  "preview_train_id": "96.jpg",
+  "preview_variants": 11,
+  "old_files_unchanged": {
+    "experiments.csv": "9e53fdf8c26734b7cb7db31f133269552c7bc9b3bb90dab136fbd3e235627724",
+    "configs\\resnet50_lgffe_domain_shift_stronger.json": "e3305e33641a92016c20cbacc945be4436e7048cdc63697887cf94a77a11690b",
+    "configs\\resnet50_partial_domain_shift_stronger.json": "72f0cd93a623689beb43238e7936c2e240d7a7906cc5864a1ad7346508123437",
+    "notebooks\\12_resnet50_lgffe.ipynb": "42a46cfa9b850bea56725b576ff007f3afbfccc5fdb8f004c342a8b7c323efc5",
+    "artifacts\\logs\\resnet50_lgffe_domain_shift_stronger_001\\config.json": "9dca7e375217b74e4b979b1d7db0aa53a9eb5273765e0f14f6a066acd5407da7",
+    "artifacts\\logs\\resnet50_lgffe_domain_shift_stronger_001\\history.csv": "1b25736eed69698045e72a9a58e6f15f211dc5a40e70929404c2d91343cd5c06",
+    "artifacts\\logs\\resnet50_lgffe_domain_shift_stronger_001\\learning_curves.png": "02777790372c91c67b5972f89b4d2ba992b2031a13b7bc5e304c7ba8e3e69a30",
+    "artifacts\\logs\\resnet50_lgffe_domain_shift_stronger_001\\metadata.json": "f218915c6859c6307788e05d6940d0e7b4282020285b608f9d23d645ce3b2ade",
+    "artifacts\\logs\\resnet50_lgffe_domain_shift_stronger_001\\summary.json": "f5c01fc9cc7f0655613d9e8a4faa92c4c487fbc3e120a52b1f01a30e6f6158db",
+    "artifacts\\logs\\resnet50_lgffe_domain_shift_stronger_001\\training.log": "287e161a214ab0508557124d65b19bc6fa21ee47cb59d6cf9cf6e7a5b1eae3f8",
+    "artifacts\\predictions\\resnet50_lgffe_domain_shift_stronger_001\\val.csv": "9a14cfc2706736c75e89ec8f1f33a063fae6a2cdc54c6865cb3e4ea2e09d0f15",
+    "artifacts\\predictions\\resnet50_lgffe_domain_shift_stronger_001\\val_probabilities.npz": "034b97b019582fd7bdfe819a8d5d0ec6d65b7a2850320c340cd1d4437af0e608",
+    "artifacts\\logs\\resnet50_partial_domain_shift_stronger_001\\config.json": "fc70806a22e21d65f90ce8b5866c20f70fd6578ac65ba4610d7e5ab922ad07c4",
+    "artifacts\\logs\\resnet50_partial_domain_shift_stronger_001\\history.csv": "db1094627b37c83d6381888efc116b921f36da2a023f61113c9028581193d851",
+    "artifacts\\logs\\resnet50_partial_domain_shift_stronger_001\\learning_curves.png": "a1002a2cd9e17657704c293c3c98cb557e8dde5d028d6c57296b3f130c3990a8",
+    "artifacts\\logs\\resnet50_partial_domain_shift_stronger_001\\metadata.json": "e9b03b98f7289171edc85452988ed61473b4e0a00c4d43fda56d063adb05a1dd",
+    "artifacts\\logs\\resnet50_partial_domain_shift_stronger_001\\summary.json": "27336005a292c82c25a4cad1b251e03c96a534fb2978503f83bf92d553adb633",
+    "artifacts\\logs\\resnet50_partial_domain_shift_stronger_001\\training.log": "d35314201929734c4dfdbc3efc9ad6c4154ca1a04670f8c90b366c0a8d540c2a",
+    "artifacts\\predictions\\resnet50_partial_domain_shift_stronger_001\\val.csv": "b331132b4f24b1b345580e28af58290d0307f7a6c4d64ffc57f62d92b54198b6",
+    "artifacts\\predictions\\resnet50_partial_domain_shift_stronger_001\\val_probabilities.npz": "75d8f376c85d8e71da82f61bdd966e2f43ef42cae3e2c5fe1fc6a87af6b87a19"
+  }
+}
