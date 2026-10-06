@@ -3,12 +3,13 @@ from math import prod
 from torch import nn
 from .pooling import CompatibleAdaptiveAvgPool2d
 from .pretrained import RESNET_ARCHITECTURES, build_pretrained
+from .lgffe import build_lgffe
 
 
 def build_model(config, image_size, num_classes, model_factory=None, *, initialize_pretrained=True):
     """External factory: (model_config, image_size, num_classes) -> nn.Module."""
     architecture = config.get("architecture", config["name"]).lower()
-    allowed = {"alexnet", "vgg", "resnet", "inception"} | RESNET_ARCHITECTURES
+    allowed = {"alexnet", "vgg", "resnet", "inception", "resnet50_lgffe"} | RESNET_ARCHITECTURES
     if config.get("pretrained", False) and architecture not in allowed:
         raise ValueError("Only pretrained AlexNet, VGG, ResNet and Inception are permitted")
     if model_factory is not None:
@@ -16,6 +17,8 @@ def build_model(config, image_size, num_classes, model_factory=None, *, initiali
         if not isinstance(model, nn.Module):
             raise TypeError("model_factory must return nn.Module producing class logits")
         return model
+    if architecture == "resnet50_lgffe":
+        return build_lgffe(config, image_size, num_classes, initialize_pretrained)
     if architecture in RESNET_ARCHITECTURES or architecture == "resnet":
         return build_pretrained(config, num_classes, initialize_pretrained)
     if config.get("pretrained", False) or config["name"] not in {"mlp", "cnn"}:
