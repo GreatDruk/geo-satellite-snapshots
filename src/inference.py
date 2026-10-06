@@ -217,6 +217,8 @@ def run_selected_inference(selection, run_id, *, split="val", project_root=PROJE
         if file_hash(checkpoint_path) != member["sha256"]:
             raise ValueError(f"Selected checkpoint changed: {checkpoint_path}")
         model, checkpoint = load_checkpoint(checkpoint_path, device, inference_only=True)
+        if split == "val" and checkpoint.get("final_refit"):
+            raise ValueError("Final train+val checkpoint has no held-out validation; use split=test")
         if set(checkpoint["class_labels"]) != set(selection["class_labels"]):
             raise ValueError("Checkpoint classes do not match selection")
         data_config = _data_config(checkpoint, device, batch_size, num_workers)
