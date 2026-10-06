@@ -1,5 +1,7 @@
 # Проверка final train+val refit и четыре тестовых сабмита
 
+**Обновление:** все четыреtest submissions уже выполнены пользователем наKaggle, suite `submissions_001`, и прошлиполнуюпроверку файлов/журнала/520chunks. [Результат](test_submissions_review.md). Ниже сохранена инструкция ипредыдущаяпроверкаrefit; утверждение оещёне выполненномtest inference относится кпрошломуэтапу.
+
 Оба запуска проверены по config/history/summary/metadata/journal/actual checkpoint. [Машиночитаемый итог](final_refit_audit.csv). Признаков ошибки выполнения не найдено.
 
 | Запуск | Эпох | Изображений каждую эпоху | Последняя train Accuracy | Последний train loss | Минут |
