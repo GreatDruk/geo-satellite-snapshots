@@ -1,5 +1,7 @@
 # Kaggle Week 5 — Object classification from geo-satellite snapshots
 
+Final train+val50/101 проверены, обаcomplete. Следующий запуск: [10_test_submissions.ipynb](notebooks/10_test_submissions.ipynb), четыре фиксированныхtest-рецепта single101/ensemble101+50D4 × train/train+val. ВключитьRUN_TEST=True наKaggle, проверитьпути4checkpoint. [Проверка и инструкция](docs/final_refit_review.md). Test probabilities/CSV сохраняются, вexperiments.csv добавляются отдельныеinference/submission строки безвыдуманнойAccuracy. Ниже — история.
+
 Актуальный этап: [08_frozen_pairwise_experiments.ipynb](notebooks/08_frozen_pairwise_experiments.ipynb) содержит выполненные фиксированные ансамбли и frozen logistic reranker. Ни один не превзошёл101+50D4 (679/699). [Отчёт](docs/frozen_experiments_review.md). Финальный train+val разрешён пользователем: [09_final_refit.ipynb](notebooks/09_final_refit.ipynb), presets50/101, RUN_REFIT=False. Бывшаяval после refit не служит метрикой/выборомcheckpoint. Full-контроль больше не предлагается. Далее — история.
 
 Классификация спутниковых изображений на 20 классов; метрика — Accuracy. Train содержит 4999 изображений, val — 699, test — 8299. Ограничения соревнования и накопленные выводы хранятся в `findings.md`.
