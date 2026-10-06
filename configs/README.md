@@ -1,5 +1,7 @@
 # Конфигурации экспериментов
 
+**После завершённого RRC50:**95.14% хужеstronger50(96.57%); [аудит](../docs/resnet50_rrc_review.md). Следующий отдельный конфиг — `resnet50_partial_domain_shift_smoothing.json` (тот же stronger, только smoothing0.05, безcrop). RRC+smoothing/CutMix пока не рекомендованы к запуску; прежние JSON сохранены.
+
 **Текущая серия — одна ResNet50, без ансамблей:** [план и критерии](../docs/resnet50_training_plan.md). Следующий запуск — `resnet50_partial_domain_shift_rrc.json`; затем отдельный smoothing, условно CutMix/CosFace, mining в резерве. Все25 эпох, partial, seed42; контроль — уже обученный stronger50,96.57%. Все пять сразу запускать не требуется. Удобный launcher/comparison: `07_resnet50_training_strategies.ipynb`;03 также переключён на RRC50. Ниже сохранены предыдущие конфигурации и история решений.
 
 | Новый конфиг | Что добавляет | Контроль |
