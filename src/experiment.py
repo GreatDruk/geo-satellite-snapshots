@@ -95,6 +95,8 @@ def run_experiment(config, exp_id=None, *, project_root=PROJECT_ROOT,
     """
     root = Path(project_root).resolve()
     config = load_config(config, root)
+    if config.get("final_refit"):
+        raise ValueError("Final train+val configs require src.final_refit.run_final_refit, not run_experiment")
     exp_id = exp_id or config.get("exp_id")
     if not isinstance(exp_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,79}", exp_id):
         raise ValueError("exp_id: 1-80 letters, digits, underscores or hyphens")
