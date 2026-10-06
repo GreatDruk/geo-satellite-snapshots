@@ -1,5 +1,9 @@
 # Findings
 
+Анализ test и public scores: лучший результат — **ансамбль train+val, 95.370%**; train-only ансамбль — 95.111%. В [11_test_prediction_analysis.ipynb](notebooks/11_test_prediction_analysis.ipynb) уже выполнен просмотр случайных, неуверенных и спорных изображений с вероятностями. [Выводы и инструкция](docs/test_prediction_analysis_review.md). Scores внесены в experiments.csv. Ниже — история.
+
+**Четыреtest submissions выполнены и проверены:** suite `submissions_001`, CUDA/batch64,14.06мин. Все520batch-кэшей/8NPZ/4CSV согласованы,8299IDs вsample order, ensemble=0.5*p101+0.5*p50D4. Checkpoint/data/CSV hashes подтверждены, вjournal четыре отдельныеsubmission-строки бездублей. Public scores пока пусты; качествоrefit наtest ещё не оценено. [Проверка](docs/test_submissions_review.md). Далее — история.
+
 **Final refit завершён и проверен:**50=20эпох/5698samples/99.61%train/15.61мин;101=21/5698/99.75%train/30.37мин. CSV/checkpoint hashes/configs/classes/finite tensors/LR/history/journal согласуются, synthetic forward успешен. Held-out Accuracy послеrefit нет. [Аудит](docs/final_refit_review.md). Notebook10 подготовлен длячетырёхtest submission:single101 иensemble101+50D4, каждоеtrain противtrain+val. Реальныеtest predictions пока не вычислены; public score появится послеотдельнойзагрузкиCSV наKaggle.
 
 **Актуальный итог — frozen experiments:** четыре фиксированных ансамбля и три pairwise logistic выполнены. Тройка stronger50/CosFace/mining676/699 (+1 к одиночной50), лучший pipeline по-прежнему **101 none + stronger50 D4:679/699**. Добавление CosFace677, mining679 без выигрыша; reranker677 и дляsingle101, и дляансамбля (исправляет1, портит2/3). [Отчёт](docs/frozen_experiments_review.md), выполненный notebook08. Full-контроль снят с плана. **Пользователь подтвердил: финальный train+val refit разрешён**, бывшаяval после этого не held-out. Presets50/101 и notebook09 готовы, обучение пока не запускалось. Ниже — история.

@@ -1,5 +1,9 @@
 # Kaggle Week 5 — Object classification from geo-satellite snapshots
 
+Анализ test и public scores: лучший результат — **ансамбль train+val, 95.370%**; train-only ансамбль — 95.111%. В [11_test_prediction_analysis.ipynb](notebooks/11_test_prediction_analysis.ipynb) уже выполнен просмотр случайных, неуверенных и спорных изображений с вероятностями. [Выводы и инструкция](docs/test_prediction_analysis_review.md). Scores внесены в experiments.csv. Ниже — история.
+
+Четыреtest submissions suite `submissions_001` уже созданы и проверены: [аудит](docs/test_submissions_review.md). CUDA inference14.06мин; всеCSV содержат8299строк и лежат вsubmissions/. Вероятности/логи/таблица согласованы. Повторно запускать дляполученияэтихжеCSV не требуется; scores Kaggle пока не внесены. Ниже — история.
+
 Final train+val50/101 проверены, обаcomplete. Следующий запуск: [10_test_submissions.ipynb](notebooks/10_test_submissions.ipynb), четыре фиксированныхtest-рецепта single101/ensemble101+50D4 × train/train+val. ВключитьRUN_TEST=True наKaggle, проверитьпути4checkpoint. [Проверка и инструкция](docs/final_refit_review.md). Test probabilities/CSV сохраняются, вexperiments.csv добавляются отдельныеinference/submission строки безвыдуманнойAccuracy. Ниже — история.
 
 Актуальный этап: [08_frozen_pairwise_experiments.ipynb](notebooks/08_frozen_pairwise_experiments.ipynb) содержит выполненные фиксированные ансамбли и frozen logistic reranker. Ни один не превзошёл101+50D4 (679/699). [Отчёт](docs/frozen_experiments_review.md). Финальный train+val разрешён пользователем: [09_final_refit.ipynb](notebooks/09_final_refit.ipynb), presets50/101, RUN_REFIT=False. Бывшаяval после refit не служит метрикой/выборомcheckpoint. Full-контроль больше не предлагается. Далее — история.
