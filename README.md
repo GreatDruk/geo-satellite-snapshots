@@ -124,6 +124,8 @@ python -m unittest discover -s tests -v
 
 См. [docs/configuration.md](docs/configuration.md): порядок слоёв, параметры, размеры тензоров и примеры scheduler.
 
+Отдельный эксперимент ResNet50 + AGMFA подготовлен в [notebooks/14_resnet50_agmfa.ipynb](notebooks/14_resnet50_agmfa.ipynb), конфиг — [configs/resnet50_agmfa_robust_augmix.json](configs/resnet50_agmfa_robust_augmix.json). Увеличенное spatial resolution layer4, три attention masks и guided multilayer fusion; прежний Robust AugMix+D4 без MixStyle. Обучение по умолчанию выключено. Архитектура, адаптации статьи, запуск и проверки описаны в [docs/agmfa.md](docs/agmfa.md).
+
 `02_baseline_cnn.ipynb` остаётся для простого baseline. `04_augmentations.ipynb` содержит выбор одного из четырёх сравнимых CNN-рецептов на 256×256 и просмотр train-аугментаций. Порядок: `cnn_256_no_aug` → `cnn_256_geometry` → `cnn_256_photo` → `cnn_256_domain_shift`. У всех одинаковы архитектура и обучение, меняются только аугментации. CNN 96/128 сохранены в `configs/archive/`.
 
 В обоих baseline-конфигах `image_size=256`: изображения подаются в исходном разрешении. `64` тоже допустимо, но означает уменьшение при загрузке и отдельный эксперимент. Исходные файлы никогда не меняются. MLP при 256×256 имеет около 50 млн весов только в первом Linear; уменьшение размера входа уменьшает её стоимость.
