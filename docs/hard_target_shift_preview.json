@@ -1,0 +1,112 @@
+[
+  {
+    "id": "9214.jpg",
+    "profile": "blur_lowres",
+    "downscale": 0.23308031985867647,
+    "blur": "motion",
+    "kernel": 15,
+    "angle": 39.901155990866656,
+    "jpeg_quality": 52,
+    "profile_id": 1,
+    "d4": 6,
+    "seed": 42,
+    "epoch": 1,
+    "sample_index": 3270
+  },
+  {
+    "id": "10799.jpg",
+    "profile": "dusk_color_cast",
+    "brightness": 0.4099257309124984,
+    "saturation": 0.49061916685886225,
+    "gamma": 1.495064356995573,
+    "cast_family": "green",
+    "channel_gains": [
+      0.6774530262777316,
+      1.4421092194680338,
+      0.8615673533273982
+    ],
+    "blur": 1.0787748705166176,
+    "profile_id": 2,
+    "d4": 4,
+    "seed": 42,
+    "epoch": 1,
+    "sample_index": 3865
+  },
+  {
+    "id": "6169.jpg",
+    "profile": "artifact_noise",
+    "shot_counts": 31.116622513803105,
+    "gaussian_std": 0.12123163653612756,
+    "blotch_grid": 5,
+    "blotch_amplitude": 0.18565017075520163,
+    "jpeg_quality": 16,
+    "profile_id": 5,
+    "d4": 4,
+    "seed": 42,
+    "epoch": 1,
+    "sample_index": 2164
+  },
+  {
+    "id": "12053.jpg",
+    "profile": "haze_lowcontrast",
+    "contrast": 0.6474958912472655,
+    "saturation": 0.7579603341653175,
+    "brightness": 1.1922518557441164,
+    "veil_value": 235,
+    "veil_alpha": 0.1689666749575787,
+    "blur": 0.7579373882155436,
+    "profile_id": 3,
+    "d4": 2,
+    "seed": 42,
+    "epoch": 1,
+    "sample_index": 4292
+  },
+  {
+    "id": "6233.jpg",
+    "profile": "off_nadir",
+    "angle": 9.313614327570548,
+    "shear": -11.281138366662246,
+    "corners": [
+      [
+        59.05867365851915,
+        25.7933617714343
+      ],
+      [
+        251.0,
+        49.33763664024057
+      ],
+      [
+        173.509926453817,
+        229.20663822856565
+      ],
+      [
+        4.000000000000004,
+        194.8563285458413
+      ]
+    ],
+    "profile_id": 4,
+    "d4": 0,
+    "seed": 42,
+    "epoch": 1,
+    "sample_index": 2193
+  },
+  {
+    "id": "1258.jpg",
+    "profile": "dusk_color_cast",
+    "brightness": 0.6168244435582736,
+    "saturation": 0.5927245591941355,
+    "gamma": 1.0676504236744586,
+    "cast_family": "warm",
+    "channel_gains": [
+      1.2577360819142838,
+      1.190396776529481,
+      0.7404458796784277
+    ],
+    "blur": 0.6595404114846114,
+    "profile_id": 2,
+    "d4": 0,
+    "seed": 42,
+    "epoch": 1,
+    "sample_index": 445
+  }
+]
