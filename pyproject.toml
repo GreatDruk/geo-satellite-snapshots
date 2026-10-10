@@ -1,7 +1,7 @@
 [project]
 name = "comp-2"
 version = "0.1.0"
-description = "Config-driven satellite image classification experiments"
+description = "Final AGMFA and ResNet50 satellite classification pipeline"
 readme = "README.md"
 authors = [
     { name = "Seva Peretiatko", email = "peretyatkosewa06@mail.ru" }
@@ -18,12 +18,12 @@ dependencies = [
 ]
 
 [project.scripts]
-comp-2 = "src.experiment:main"
+comp-2 = "final.src.runner:main"
 
 [build-system]
 requires = ["uv_build>=0.12.15,<0.13.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = "src"
+module-name = ["final", "archive"]
 module-root = ""

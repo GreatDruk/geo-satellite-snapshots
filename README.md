@@ -1,142 +1,41 @@
-# Kaggle Week 5 — Object classification from geo-satellite snapshots
+# Satellite Object Classification
 
-Следующий единственный LGFFE run: [13_lgffe_robust_domain_shift.ipynb](notebooks/13_lgffe_robust_domain_shift.ipynb), [конфиг Robust AugMix + MixStyle](configs/resnet50_lgffe_robust_augmix_mixstyle.json). D4 + custom AugMix(no-JSD) заменяют stronger corruption pipeline; MixStyle после layer1/layer2. [Описание, preview и проверки](docs/lgffe_robust_recipe.md). Обучение выключено; preview train уже выполнен.
+Классификация спутниковых снимков по категориям объектов. Команда SBMTeam.
 
-Подготовлен отдельный эксперимент [ResNet50 + LGFFE](notebooks/12_resnet50_lgffe.ipynb): GRU-based regional attention, global/local fusion, stronger domain_shift и random D4. [Конфиг](configs/resnet50_lgffe_domain_shift_stronger.json), [архитектура и запуск](docs/lgffe_experiment.md). Обучение пока не выполнено; в notebook оно выключено по умолчанию.
-
-Анализ test и public scores: лучший результат — **ансамбль train+val, 95.370%**; train-only ансамбль — 95.111%. В [11_test_prediction_analysis.ipynb](notebooks/11_test_prediction_analysis.ipynb) уже выполнен просмотр случайных, неуверенных и спорных изображений с вероятностями. [Выводы и инструкция](docs/test_prediction_analysis_review.md). Scores внесены в experiments.csv. Ниже — история.
-
-Четыреtest submissions suite `submissions_001` уже созданы и проверены: [аудит](docs/test_submissions_review.md). CUDA inference14.06мин; всеCSV содержат8299строк и лежат вsubmissions/. Вероятности/логи/таблица согласованы. Повторно запускать дляполученияэтихжеCSV не требуется; scores Kaggle пока не внесены. Ниже — история.
-
-Final train+val50/101 проверены, обаcomplete. Следующий запуск: [10_test_submissions.ipynb](notebooks/10_test_submissions.ipynb), четыре фиксированныхtest-рецепта single101/ensemble101+50D4 × train/train+val. ВключитьRUN_TEST=True наKaggle, проверитьпути4checkpoint. [Проверка и инструкция](docs/final_refit_review.md). Test probabilities/CSV сохраняются, вexperiments.csv добавляются отдельныеinference/submission строки безвыдуманнойAccuracy. Ниже — история.
-
-Актуальный этап: [08_frozen_pairwise_experiments.ipynb](notebooks/08_frozen_pairwise_experiments.ipynb) содержит выполненные фиксированные ансамбли и frozen logistic reranker. Ни один не превзошёл101+50D4 (679/699). [Отчёт](docs/frozen_experiments_review.md). Финальный train+val разрешён пользователем: [09_final_refit.ipynb](notebooks/09_final_refit.ipynb), presets50/101, RUN_REFIT=False. Бывшаяval после refit не служит метрикой/выборомcheckpoint. Full-контроль больше не предлагается. Далее — история.
-
-Классификация спутниковых изображений на 20 классов; метрика — Accuracy. Train содержит 4999 изображений, val — 699, test — 8299. Ограничения соревнования и накопленные выводы хранятся в `findings.md`.
-
-Последний результат серии50: stronger675/699 остаётсялучшим, smoothing672/CosFace674/mining672. [Аудит и выводы](docs/resnet50_strategies_review.md).07 сравниваетсохранённыеruns при `RUN_TRAINING=False`. Если продолжать обучение, подготовлен одинfull+stronger контроль: `configs/resnet50_full_domain_shift_stronger.json`; результат ещё не получен. Далее — история предыдущих этапов.
-
-После первого запуска новой серии RRC50 оказался хуже:95.14% против96.57% stronger50; [проверка](docs/resnet50_rrc_review.md). Следующий отдельный fallback — `configs/resnet50_partial_domain_shift_smoothing.json` (smoothing0.05, безcrop), выбран в03/07. Ниже первоначальное описание серии; RRC+smoothing/CutMix сейчас отложены.
-
-Текущий этап — улучшение **одной ResNet50**: [план](docs/resnet50_training_plan.md), launcher и сравнение в `notebooks/07_resnet50_training_strategies.ipynb`. Первый конфиг — `resnet50_partial_domain_shift_rrc.json`; отдельные smoothing/CutMix/CosFace/mining подготовлены как следующие условные эксперименты. Контроль — сохранённая одиночная stronger50,96.57%; новые результаты ещё не получены.
-
-## Структура
+Финальный рецепт: AGMFA на ResNet50 и обычная ResNet50, сильные HardShift-аугментации, по 25 эпох со свежих ImageNet V2 весов на train+val. Для применения — Geometry-4 TTA и фиксированное смешивание вероятностей: поровну в общем случае, с повышенным весом AGMFA для зданий и ResNet50 для железной дороги.
 
 ```text
-project/
-├── data/raw/                 # Неизменяемые исходные изображения и CSV
-├── data/processed/           # Производные данные будущих экспериментов
-├── notebooks/                # Запуски и будущий анализ
-├── src/
-│   ├── data.py               # CSV, Dataset, DataLoader; порядок классов из classes.csv
-│   ├── transforms.py         # Resize, фиксированная нормализация, train-аугментации
-│   ├── models/models.py      # Сборка MLP/CNN по списку слоёв
-│   ├── training/train.py     # Одна эпоха обучения
-│   ├── training/evaluate.py  # Validation loss и accuracy
-│   ├── training/predict.py   # Предсказания и экспорт submission
-│   ├── experiment.py         # Полный цикл эксперимента
-│   └── utils.py              # Seed, журнал, графики
-├── configs/
-│   ├── baseline_mlp.json
-│   └── baseline_cnn.json
-├── artifacts/
-│   ├── models/<exp_id>/
-│   ├── predictions/<exp_id>/
-│   └── logs/<exp_id>/
-├── submissions/
-├── tests/test_pipeline.py    # Проверки на синтетических данных
-├── experiments.csv           # Журнал завершённых запусков
-├── findings.md               # Накопленные выводы
-└── README.md
+final/           Финальный код, ноутбук и конфиги для нового обучения
+archive/         Исторические эксперименты: src, notebooks, configs, tests
+docs/experiments.md  Короткая история гипотез и выводов
+experiments.csv  Исторические обучения и будущие запуски
+data/raw/        Исходные данные, скачиваются отдельно
+artifacts/       Веса и логи новых финальных запусков
+submissions/     Новые предсказания
 ```
 
-`project/` — текущий корень репозитория. `data/raw/` не должен модифицироваться.
+В архиве сохранены ранние обучения, анализ валидации и их локальные артефакты. Исследования с размеченным тестом и связанные результаты удалены из рабочей версии. `final/` содержит рецепт для нового обучения; прежние веса и метрики не представлены как результаты этого рецепта.
 
-## Запуск
-
-Откройте `notebooks/01_baseline_mlp.ipynb` или `02_baseline_cnn.ipynb` с Python-ядром, в котором доступны зависимости из `pyproject.toml`. В notebook достаточно импорта, уникального имени эксперимента и пути к конфигу:
-
-```python
-from src.experiment import run_experiment
-
-result = run_experiment("configs/baseline_cnn.json", exp_id="cnn_001")
-```
-
-В обоих notebooks уже есть короткая ячейка, добавляющая корень проекта в путь импорта. Пути к конфигам и данным вычисляются относительно корня, поэтому запуск из `notebooks/` также работает.
-
-Из терминала в корне:
+Установка в окружении с Python 3.12+ и совместимыми PyTorch/torchvision:
 
 ```bash
-python -m src.experiment configs/baseline_cnn.json --exp-id cnn_001
+python -m pip install -r final/requirements.txt
+python -m final.src.runner train --raw-dir data/raw --run-id final_001
 ```
 
-Конфиги — стартовые настройки, а не результаты или оптимальные гиперпараметры. Для нового опыта скопируйте JSON либо загрузите его через `load_config`, измените словарь и передайте в `run_experiment`. Функция сохраняет фактически использованный конфиг.
+Обучение требует только `train.csv`, `val.csv`, `classes.csv`, `train/` и `val/`. Веса ImageNet скачиваются torchvision или берутся из его кэша. Для автономного запуска можно передать `--imagenet-weights /path/to/resnet50-11ad3fa6.pth`.
 
-## Настройка конфигурации
-
-- `seed` фиксирует Python, NumPy, PyTorch и seed генераторов DataLoader/workers. `training.deterministic=true` включает строгие детерминированные алгоритмы. Повторяемость ожидается в одинаковом программном и аппаратном окружении; при deterministic_warn_only=false неподдерживаемая детерминированная операция завершит запуск ошибкой; при true выдаст предупреждение.
-- `data.image_size`: число для квадратного входа или `[height, width]`. `batch_size`, `num_workers`, `pin_memory` настраивают загрузку. По умолчанию `num_workers=0` удобно для Windows notebooks.
-- `data.normalization.mean/std`: фиксированные RGB-значения; код не подбирает статистики на test. По умолчанию это `[0.5, 0.5, 0.5]`.
-- `data.augmentation`: пустой объект отключает аугментации. Поддерживаются отражения, повороты, изменения цвета/gamma, шум, blur, JPEG и снижение детализации. Аугментации применяются только к train; описание параметров и сравнимых CNN-конфигов — в [docs/augmentations.md](docs/augmentations.md).
-- `model.layers`: последовательность слоёв. Поддерживаются `conv2d`, `max_pool2d`, `adaptive_avg_pool2d`, `batch_norm2d`, `flatten`, `linear`, `dropout`, `relu`, `leaky_relu`, `gelu`, `silu`, `sigmoid`, `tanh`. Параметры соответствуют PyTorch; размер входа выводится автоматически. Последний слой — `linear` с `out_features: "num_classes"`. Выход — logits, Softmax перед CrossEntropyLoss не нужен.
-- `training`: `scheduler` (опционально; `null` отключает), `epochs`, `log_every` (каждая k-я эпоха; первая и последняя также печатаются), `device` (`auto`, `cpu`, `cuda`), `deterministic`, `optimizer`. Поддерживаются Adam, AdamW, SGD с параметрами PyTorch.
-- `notes`: комментарий для журнала.
-
-CNN использует adaptive pooling, поэтому размер входа можно менять без ручного пересчёта Linear. MLP получает размер Flatten из `image_size`.
-
-## Результаты запуска
-
-После успешного опыта автоматически сохраняются:
-
-- `artifacts/models/<exp_id>/best.pt` и `last.pt`: веса, состояния optimizer и scheduler, конфиг, эпоха и порядок классов. Best выбирается по максимальной val accuracy; при равенстве сохраняется более ранняя эпоха.
-- `artifacts/logs/<exp_id>/config.json`, `metadata.json`, `history.csv`, `training.log`, `summary.json`, `learning_curves.png`: настройки, окружение, метрики каждой эпохи, сообщения и графики loss/accuracy. В notebook графики также выводятся автоматически.
-- `artifacts/predictions/<exp_id>/val.csv`: ID, предсказанный label и true_label лучшей модели.
-- Одна строка в `experiments.csv`: лучшая val accuracy в диапазоне 0–1, время цикла обучения в минутах, seed и параметры. `public_score` остаётся пустым до получения реального результата Kaggle.
-
-`result` содержит лучшую модель, DataFrame истории, лучшую эпоху, accuracy и пути. Восстановить сохранённую модель можно через `load_checkpoint` из `src.experiment`. Checkpoints не реализуют точное продолжение прерванного обучения: для этого дополнительно нужны состояния RNG и загрузчиков.
-
-Каждый запуск должен иметь уникальный `exp_id`. Существующий журнал и артефакты не перезаписываются. Запуски с общим журналом выполняйте последовательно. Если запуск прервался, сохранённые метрики/checkpoints и сообщение об ошибке остаются в его директориях; новая строка успешного опыта не добавляется. Следующий запуск получает новый ID.
-
-## Test и будущие модели
-
-По умолчанию test не загружается. Явно включить inference лучшей модели и создание submission можно так:
-
-```python
-result = run_experiment("configs/baseline_cnn.json", exp_id="cnn_002", predict_test=True)
-```
-
-Будут дополнительно созданы `artifacts/predictions/cnn_002/test.csv` и `submissions/cnn_002.csv`, с ID в порядке sample submission. Test не участвует в обучении, выборе checkpoint, fitting preprocessing, feature selection, representations или clustering. Отправка в Kaggle вручную.
-
-Обучение, оценка и сохранение не зависят от конкретной архитектуры. Для будущей модели предусмотрен аргумент `model_factory`: функция `(model_config, image_size, num_classes) -> torch.nn.Module`, возвращающая logits формы `[batch, num_classes]`. Та же фабрика нужна при `load_checkpoint`. Встроены torchvision ResNet18/34/50/101/152 и режимы transfer learning; подробности в docs/transfer_learning.md. Разрешены AlexNet, VGG, ResNet и Inception; Transformers запрещены. Нормализацию, размер входа, заморозку слоёв и единственный выход logits будущая фабрика/конфиг должны задавать явно.
-
-`findings.md` хранит только известные сведения и накопленные выводы. `99_final_pipeline.ipynb` воспроизводит выбранный на val manifest из сохранённых checkpoints; test inference включается явно после выбора решения.
-
-## Проверки
+Применение после завершения обоих обучений:
 
 ```bash
-python -m unittest discover -s tests -v
+python -m final.src.runner predict --agmfa-checkpoint artifacts/models/final_001_agmfa/last.pt --resnet50-checkpoint artifacts/models/final_001_resnet50/last.pt --sample-csv data/raw/sample_submission_example.csv --image-dir data/raw/test --output-dir submissions/final_001
 ```
 
-Тесты создают маленькие синтетические датасеты во временной директории и проверяют MLP/CNN, повторяемость seed, checkpoints, журнал, порядок предсказаний, экспорт submission и фабрику модели. Исходные данные и журнал реальных экспериментов не меняются.
+Создаются CSV каждой модели и ансамбля, а также их вероятности. Из шаблона читаются только ID. Подробности — в [final/README.md](final/README.md), пошаговый запуск — в [финальном ноутбуке](final/notebooks/01_final_pipeline.ipynb).
 
+Проверки на синтетических данных:
 
-## Подробное описание конфигов
-
-См. [docs/configuration.md](docs/configuration.md): порядок слоёв, параметры, размеры тензоров и примеры scheduler.
-
-Отдельный эксперимент ResNet50 + AGMFA подготовлен в [notebooks/14_resnet50_agmfa.ipynb](notebooks/14_resnet50_agmfa.ipynb), конфиг — [configs/resnet50_agmfa_robust_augmix.json](configs/resnet50_agmfa_robust_augmix.json). Увеличенное spatial resolution layer4, три attention masks и guided multilayer fusion; прежний Robust AugMix+D4 без MixStyle. Обучение по умолчанию выключено. Архитектура, адаптации статьи, запуск и проверки описаны в [docs/agmfa.md](docs/agmfa.md).
-
-`02_baseline_cnn.ipynb` остаётся для простого baseline. `04_augmentations.ipynb` содержит выбор одного из четырёх сравнимых CNN-рецептов на 256×256 и просмотр train-аугментаций. Порядок: `cnn_256_no_aug` → `cnn_256_geometry` → `cnn_256_photo` → `cnn_256_domain_shift`. У всех одинаковы архитектура и обучение, меняются только аугментации. CNN 96/128 сохранены в `configs/archive/`.
-
-В обоих baseline-конфигах `image_size=256`: изображения подаются в исходном разрешении. `64` тоже допустимо, но означает уменьшение при загрузке и отдельный эксперимент. Исходные файлы никогда не меняются. MLP при 256×256 имеет около 50 млн весов только в первом Linear; уменьшение размера входа уменьшает её стоимость.
-
-`training.scheduler` по умолчанию `null`. Поддерживаются StepLR (`step`), CosineAnnealingLR (`cosine`) и ReduceLROnPlateau (`plateau`). Scheduler обновляется после обучения и validation, задавая LR следующей эпохи. Plateau использует только `val_loss` либо `val_accuracy`. В истории сохраняются `learning_rate` текущей эпохи и `next_learning_rate`; LR печатается в логе и отображается на третьем графике. Состояние scheduler сохраняется в best/last checkpoints.
-
-
-Поддержка встроенных ResNet и исправление deterministic для CUDA описаны в [docs/transfer_learning.md](docs/transfer_learning.md).
-
-Новые обучения сохраняют вероятности в NPZ с IDs и порядком классов. В `05_error_analysis.ipynb` выбирается один EXPERIMENT_ID: ноутбук показывает ошибки с top-5 вероятностями и top-30 объектов с минимальным разрывом top-1/top-2 (TOP_K и UNCERTAIN_TOP_N настраиваются). Если val_probabilities.npz отсутствует, выполняется val-only inference best.pt на CPU/CUDA и результат сохраняется; переобучение не требуется. Сравнения TTA, ансамблей и аудит потенциала специалистов перенесены в `06_tta_ensembles.ipynb`. `src/inference.py` сохраняет сравнение и выбранный manifest отдельно от журнала обучений experiments.csv. См. [docs/inference.md](docs/inference.md).
-
-В `06_tta_ensembles.ipynb` также есть full+5 crop diagnostic, сравнение фиксированных global/local mean/max и исправлений/регрессий, просмотр full/crops с вероятностями. `src/local_inference.py` сохраняет промежуточные батчи и поддерживает resume. `99_final_pipeline.ipynb` использует актуальный final_selection.json; test по умолчанию выключен.
-
-Следующий необученный кандидат: `configs/resnet101_partial_avgmax_domain_shift.json` (уже выбран в03). Average+Max pooling, 12 эпох fine-tuning из собственного `resnet101_partial_domain_shift_stronger_001/best.pt`, без нового скачивания ImageNet. Начальная голова сохраняет logits исходной модели; optimizer/scheduler новые. На Kaggle необходим исходный checkpoint по training.initialize_from. Результаты диагноза и обоснование запуска: [docs/global_local_review.md](docs/global_local_review.md).
+```bash
+python -m unittest discover -s final/tests -v
+python -m unittest discover -s archive/tests -t . -v
+```
