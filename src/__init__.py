@@ -1,1 +1,0 @@
-"""Satellite classification experiment package."""
