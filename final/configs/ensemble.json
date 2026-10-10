@@ -1,0 +1,23 @@
+{
+  "tta": "geometry4",
+  "image_size": 256,
+  "base_agmfa_weight": 0.5,
+  "eligibility": "top2",
+  "groups": {
+    "buildings": {
+      "classes": [
+        "church",
+        "palace",
+        "commercial_area"
+      ],
+      "agmfa_weight": 0.75
+    },
+    "railway": {
+      "classes": [
+        "railway",
+        "railway_station"
+      ],
+      "agmfa_weight": 0.25
+    }
+  }
+}
