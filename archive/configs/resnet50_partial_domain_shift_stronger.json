@@ -1,0 +1,105 @@
+{
+  "seed": 42,
+  "notes": "Matched ResNet50 partial: only blur severity and resolution-degradation range increased versus mild; probabilities and all other settings unchanged; untested candidate.",
+  "data": {
+    "raw_dir": "data/raw",
+    "image_size": 256,
+    "batch_size": 32,
+    "num_workers": 2,
+    "pin_memory": true,
+    "normalization": {
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ]
+    },
+    "augmentation": {
+      "horizontal_flip": 0.5,
+      "vertical_flip": 0.5,
+      "color_jitter": {
+        "p": 0.8,
+        "brightness": 0.15,
+        "contrast": 0.15,
+        "saturation": 0.15,
+        "hue": 0.02
+      },
+      "gamma": {
+        "p": 0.25,
+        "range": [
+          0.85,
+          1.15
+        ]
+      },
+      "corruption_probability": 0.65,
+      "max_corruptions": 2,
+      "gaussian_noise": {
+        "p": 0.35,
+        "std": [
+          0.005,
+          0.025
+        ]
+      },
+      "gaussian_blur": {
+        "p": 0.25,
+        "sigma": [
+          0.5,
+          2.5
+        ]
+      },
+      "jpeg_compression": {
+        "p": 0.25,
+        "quality": [
+          60,
+          95
+        ]
+      },
+      "resolution_degradation": {
+        "p": 0.2,
+        "scale": [
+          0.4,
+          1.0
+        ]
+      }
+    },
+    "persistent_workers": true,
+    "prefetch_factor": 2
+  },
+  "training": {
+    "epochs": 25,
+    "log_every": 2,
+    "device": "auto",
+    "deterministic": true,
+    "deterministic_warn_only": true,
+    "optimizer": {
+      "name": "adamw",
+      "lr": 0.0005,
+      "backbone_lr": 5e-05,
+      "head_lr": 0.0005,
+      "weight_decay": 0.001
+    },
+    "scheduler": {
+      "name": "cosine",
+      "T_max": 25,
+      "eta_min": 1e-06
+    }
+  },
+  "model": {
+    "name": "resnet50",
+    "pretrained": true,
+    "weights": "IMAGENET1K_V2",
+    "mode": "partial",
+    "head_dropout": 0.3,
+    "freeze_bn": true,
+    "warmup_epochs": 3,
+    "unfreeze_blocks": [
+      "layer3",
+      "layer4"
+    ]
+  }
+}

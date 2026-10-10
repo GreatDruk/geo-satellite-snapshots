@@ -1,0 +1,67 @@
+{
+  "seed": 42,
+  "notes": "",
+  "data": {
+    "raw_dir": "data/raw",
+    "image_size": 256,
+    "batch_size": 64,
+    "num_workers": 0,
+    "pin_memory": false,
+    "normalization": {
+      "mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "std": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "augmentation": {}
+  },
+  "training": {
+    "epochs": 20,
+    "log_every": 2,
+    "device": "auto",
+    "deterministic": true,
+    "scheduler": null,
+    "optimizer": {
+      "name": "adam",
+      "lr": 0.001,
+      "weight_decay": 0.0001
+    }
+  },
+  "model": {
+    "name": "mlp",
+    "pretrained": false,
+    "layers": [
+      {
+        "type": "flatten"
+      },
+      {
+        "type": "linear",
+        "out_features": 256
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "dropout",
+        "p": 0.3
+      },
+      {
+        "type": "linear",
+        "out_features": 128
+      },
+      {
+        "type": "relu"
+      },
+      {
+        "type": "linear",
+        "out_features": "num_classes"
+      }
+    ]
+  }
+}
