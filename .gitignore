@@ -6,6 +6,11 @@ data/raw/
 data/processed/
 data/
 artifacts/
+archive/artifacts/
+archive/experiments.csv
+final/models/
+torchinductor_*/
+submissions/
 submissions/*.csv
 .pytest_cache/
 .python-version
