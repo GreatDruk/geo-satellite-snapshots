@@ -195,7 +195,10 @@ D4 — восемь точных геометрических вариантов
 Для исходного train-объекта используется функция потерь:
 
 ```math
-\mathcal{L}_{\mathrm{source}} = \frac{1}{2}\operatorname{CE}(z_{\mathrm{clean}}, y) + \frac{1}{2}\operatorname{CE}(z_{\mathrm{hard}}, y) + 3\operatorname{JS}(p_{\mathrm{clean}}, p_{\mathrm{hard}})
+\mathcal{L}_{\mathrm{source}} =
+\frac{1}{2}\mathrm{CE}(z_{\mathrm{clean}}, y)
++ \frac{1}{2}\mathrm{CE}(z_{\mathrm{hard}}, y)
++ 3\mathrm{JS}(p_{\mathrm{clean}}, p_{\mathrm{hard}})
 ```
 
 Здесь CE учит правильному классу, а Jensen–Shannon divergence согласует вероятности двух просмотров. Для бывшей val применяются только D4 и CE с весом 2; синтетических hard-искажений нет. Общий loss нормируется на сумму весов исходных объектов.
