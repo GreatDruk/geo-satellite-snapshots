@@ -1,0 +1,538 @@
+{
+  "dataset_url": "https://drive.google.com/file/d/1sbnKeVmiOmT4ZZHIbXIxuBWF9CQLWt6s/view",
+  "dataset_counts": {
+    "train": 4999,
+    "val": 699,
+    "test": 8299,
+    "classes": 20
+  },
+  "historical_figures": [
+    {
+      "file": "train_val_examples.png",
+      "commit": "dd9dbf0a40ef515f8a481aa075e2d7ca1019d4c8",
+      "source_path": "docs/train_val_examples.png",
+      "sha256": "b1245283b645da335c88b4b8c957e503534d951f5d23726a1736bab699ac278b"
+    },
+    {
+      "file": "hard_target_shift_profiles.png",
+      "commit": "04259a7f0cf126aaaf71af3bf4e421990c06cf1a",
+      "source_path": "docs/hard_target_shift_profiles.png",
+      "sha256": "b903526bcd2128697d10b11a53bf9489322a5477a021503e0f1a5212c9e03593"
+    },
+    {
+      "file": "global_local_examples.png",
+      "commit": "87b03fd5e0d71dab82bca37790f6b9cf66a8e152",
+      "source_path": "docs/global_local_examples.png",
+      "sha256": "dc54bc50f5dfbb499bce18d16123912831a4db9de0a9d808ff270e525d225f64"
+    }
+  ],
+  "fusion_source": {
+    "commit": "a9e7bcd1a8597d3d0dd32b95267d3ce82d5c5521",
+    "path": "notebooks/18_probability_fusion.ipynb",
+    "metrics_cell": 2,
+    "cases_cell": 4,
+    "agmfa_checkpoint": "train-only B, best_loss epoch 22, cosine T_max=24",
+    "old_ensemble": "0.5 ResNet101 none + 0.5 ResNet50 stronger D4",
+    "blend": "0.5 AGMFA + 0.5 old_ensemble"
+  },
+  "fusion_metrics": [
+    {
+      "model": "agmfa",
+      "correct": "674",
+      "errors": "25",
+      "accuracy": "0.964235",
+      "nll": "0.109995",
+      "brier": "0.058696",
+      "mean_wrong_confidence": "0.732577",
+      "confident_errors_90": "4",
+      "confident_errors_95": "3"
+    },
+    {
+      "model": "old_ensemble",
+      "correct": "679",
+      "errors": "20",
+      "accuracy": "0.971388",
+      "nll": "0.132275",
+      "brier": "0.052133",
+      "mean_wrong_confidence": "0.806797",
+      "confident_errors_90": "9",
+      "confident_errors_95": "9"
+    },
+    {
+      "model": "blend_50_50",
+      "correct": "678",
+      "errors": "21",
+      "accuracy": "0.969957",
+      "nll": "0.097829",
+      "brier": "0.050104",
+      "mean_wrong_confidence": "0.728942",
+      "confident_errors_90": "4",
+      "confident_errors_95": "4"
+    }
+  ],
+  "fusion_cases": [
+    {
+      "id": "32.jpg",
+      "true_label": "palace",
+      "agmfa_label": "palace",
+      "old_ensemble_label": "commercial_area",
+      "blend_50_50_label": "palace",
+      "agmfa_confidence": "0.832582",
+      "old_ensemble_confidence": "0.620523",
+      "blend_50_50_confidence": "0.605693",
+      "brightness": "0.331167",
+      "contrast": "0.148255",
+      "detail": "0.025844",
+      "change": "fixed"
+    },
+    {
+      "id": "4761.jpg",
+      "true_label": "tennis_court",
+      "agmfa_label": "tennis_court",
+      "old_ensemble_label": "church",
+      "blend_50_50_label": "tennis_court",
+      "agmfa_confidence": "0.576834",
+      "old_ensemble_confidence": "0.413380",
+      "blend_50_50_confidence": "0.396501",
+      "brightness": "0.284694",
+      "contrast": "0.144444",
+      "detail": "0.022185",
+      "change": "fixed"
+    },
+    {
+      "id": "5900.jpg",
+      "true_label": "railway_station",
+      "agmfa_label": "railway",
+      "old_ensemble_label": "railway_station",
+      "blend_50_50_label": "railway",
+      "agmfa_confidence": "0.846198",
+      "old_ensemble_confidence": "0.557518",
+      "blend_50_50_confidence": "0.642774",
+      "brightness": "0.315910",
+      "contrast": "0.122411",
+      "detail": "0.022242",
+      "change": "regression"
+    },
+    {
+      "id": "7548.jpg",
+      "true_label": "church",
+      "agmfa_label": "commercial_area",
+      "old_ensemble_label": "church",
+      "blend_50_50_label": "commercial_area",
+      "agmfa_confidence": "0.783733",
+      "old_ensemble_confidence": "0.498364",
+      "blend_50_50_confidence": "0.640655",
+      "brightness": "0.424280",
+      "contrast": "0.182795",
+      "detail": "0.014208",
+      "change": "regression"
+    },
+    {
+      "id": "9099.jpg",
+      "true_label": "commercial_area",
+      "agmfa_label": "church",
+      "old_ensemble_label": "commercial_area",
+      "blend_50_50_label": "palace",
+      "agmfa_confidence": "0.519152",
+      "old_ensemble_confidence": "0.485147",
+      "blend_50_50_confidence": "0.376119",
+      "brightness": "0.348909",
+      "contrast": "0.202182",
+      "detail": "0.040392",
+      "change": "regression"
+    },
+    {
+      "id": "10144.jpg",
+      "true_label": "church",
+      "agmfa_label": "palace",
+      "old_ensemble_label": "church",
+      "blend_50_50_label": "palace",
+      "agmfa_confidence": "0.737453",
+      "old_ensemble_confidence": "0.513072",
+      "blend_50_50_confidence": "0.612177",
+      "brightness": "0.256988",
+      "contrast": "0.166952",
+      "detail": "0.023055",
+      "change": "regression"
+    },
+    {
+      "id": "10371.jpg",
+      "true_label": "terrace",
+      "agmfa_label": "terrace",
+      "old_ensemble_label": "rectangular_farmland",
+      "blend_50_50_label": "terrace",
+      "agmfa_confidence": "0.599395",
+      "old_ensemble_confidence": "0.542563",
+      "blend_50_50_confidence": "0.528398",
+      "brightness": "0.293308",
+      "contrast": "0.078798",
+      "detail": "0.007506",
+      "change": "fixed"
+    }
+  ],
+  "fusion_groups": [
+    {
+      "group": "church/palace",
+      "support": "70",
+      "agmfa_errors": "10",
+      "old_ensemble_errors": "8",
+      "blend_50_50_errors": "9",
+      "fixed_old": "1",
+      "broke_old": "2"
+    },
+    {
+      "group": "railway/station",
+      "support": "70",
+      "agmfa_errors": "4",
+      "old_ensemble_errors": "1",
+      "blend_50_50_errors": "2",
+      "fixed_old": "0",
+      "broke_old": "1"
+    },
+    {
+      "group": "lake/wetland",
+      "support": "70",
+      "agmfa_errors": "4",
+      "old_ensemble_errors": "4",
+      "blend_50_50_errors": "4",
+      "fixed_old": "0",
+      "broke_old": "0"
+    },
+    {
+      "group": "courts",
+      "support": "70",
+      "agmfa_errors": "3",
+      "old_ensemble_errors": "4",
+      "blend_50_50_errors": "3",
+      "fixed_old": "1",
+      "broke_old": "0"
+    }
+  ],
+  "validation_chart": {
+    "source": "experiments.csv",
+    "runs": [
+      {
+        "exp_id": "mlp_004",
+        "val_accuracy": 0.2646638054363376
+      },
+      {
+        "exp_id": "cnn_domain_shift_001",
+        "val_accuracy": 0.7281831187410587
+      },
+      {
+        "exp_id": "resnet18_partial_001",
+        "val_accuracy": 0.9127324749642346
+      },
+      {
+        "exp_id": "resnet50_partial_domain_shift_stronger_001",
+        "val_accuracy": 0.9656652360515021
+      },
+      {
+        "exp_id": "resnet101_partial_domain_shift_stronger_001",
+        "val_accuracy": 0.9699570815450643
+      },
+      {
+        "exp_id": "resnet50_lgffe_robust_augmix_mixstyle_001",
+        "val_accuracy": 0.9570815450643777
+      },
+      {
+        "exp_id": "resnet50_agmfa_robust_augmix_fixed_001",
+        "val_accuracy": 0.9570815450643777
+      },
+      {
+        "exp_id": "resnet50_hard_target_shift_001",
+        "val_accuracy": 0.9599427753934192
+      },
+      {
+        "exp_id": "resnet50_agmfa_hard_target_shift_001",
+        "val_accuracy": 0.9656652360515021
+      },
+      {
+        "exp_id": "resnet50_agmfa_hard_target_shift_finetune_001",
+        "val_accuracy": 0.9556509298998569
+      }
+    ]
+  },
+  "rendered_figures": [
+    {
+      "file": "validation_results.png",
+      "renderer": "Matplotlib",
+      "sha256": "0e2dc88502c03ed3d1f9b71363d95acad3be14503dfc781a6865966e870b7796"
+    },
+    {
+      "file": "fusion_cases.png",
+      "renderer": "Matplotlib",
+      "sha256": "caea6c52a3fb02829920c5d8f8905f45ded03ce10e192b61f1dc614931b86617"
+    },
+    {
+      "file": "expert_routing_cases.png",
+      "renderer": "Matplotlib",
+      "sha256": "80bd071b37b1a648ee566baa35c8be27e13493f2e8ff373ec7f14d641b221b02"
+    },
+    {
+      "file": "water_routing_cases.png",
+      "renderer": "Matplotlib",
+      "sha256": "3204f9fc81fc88bbef72121d1824a737603455e713e7926e361cdf464426937c"
+    }
+  ],
+  "expert_source": {
+    "path": "notebooks/08_frozen_pairwise_experiments.ipynb",
+    "commit": "aab772368dff801fb597ea9c06feee1f1cdb302b",
+    "results_cell": 7,
+    "cases_cell": 9,
+    "base": "0.5 ResNet101 none + 0.5 ResNet50 stronger D4",
+    "run_id": "frozen_building_reranker_001",
+    "routing": "unordered original top-2 pair",
+    "fit": "train only; 2048 frozen ResNet101 features; per-pair standardization; C=1 L2 logistic regression"
+  },
+  "expert_comparison": [
+    {
+      "recipe": "resnet101_single_pairwise",
+      "correct": "677",
+      "errors": "22",
+      "val_accuracy": "0.968526",
+      "fixes": "1",
+      "breaks": "2",
+      "reference": "resnet101_single",
+      "routed": "83",
+      "changed": "3",
+      "elapsed_fit_seconds": "10.036679"
+    },
+    {
+      "recipe": "reference_101_50d4_pairwise",
+      "correct": "677",
+      "errors": "22",
+      "val_accuracy": "0.968526",
+      "fixes": "1",
+      "breaks": "3",
+      "reference": "reference_101_50d4",
+      "routed": "87",
+      "changed": "4",
+      "elapsed_fit_seconds": "10.086622"
+    }
+  ],
+  "expert_binary_diagnostics": [
+    {
+      "pair": "3_9",
+      "train_samples": "499",
+      "train_accuracy": "1.0",
+      "val_pair_samples": "70",
+      "val_pair_correct": "66",
+      "val_pair_accuracy": "0.942857",
+      "iterations": "37",
+      "gradient_max": "8.000478e-07",
+      "converged": "True"
+    },
+    {
+      "pair": "3_5",
+      "train_samples": "500",
+      "train_accuracy": "1.0",
+      "val_pair_samples": "70",
+      "val_pair_correct": "67",
+      "val_pair_accuracy": "0.957143",
+      "iterations": "35",
+      "gradient_max": "6.798069e-07",
+      "converged": "True"
+    },
+    {
+      "pair": "9_5",
+      "train_samples": "499",
+      "train_accuracy": "1.0",
+      "val_pair_samples": "70",
+      "val_pair_correct": "66",
+      "val_pair_accuracy": "0.942857",
+      "iterations": "34",
+      "gradient_max": "8.597099e-07",
+      "converged": "True"
+    }
+  ],
+  "expert_routing_summary": [
+    {
+      "base": "resnet101_single",
+      "pair": "3_5",
+      "routed": "24",
+      "changed": "2",
+      "correct_before": "21",
+      "correct_after": "21",
+      "fixes": "1",
+      "breaks": "1",
+      "outside_true_pair": "0"
+    },
+    {
+      "base": "resnet101_single",
+      "pair": "3_9",
+      "routed": "39",
+      "changed": "0",
+      "correct_before": "36",
+      "correct_after": "36",
+      "fixes": "0",
+      "breaks": "0",
+      "outside_true_pair": "0"
+    },
+    {
+      "base": "resnet101_single",
+      "pair": "9_5",
+      "routed": "20",
+      "changed": "1",
+      "correct_before": "18",
+      "correct_after": "17",
+      "fixes": "0",
+      "breaks": "1",
+      "outside_true_pair": "0"
+    },
+    {
+      "base": "reference_101_50d4",
+      "pair": "3_5",
+      "routed": "22",
+      "changed": "2",
+      "correct_before": "20",
+      "correct_after": "20",
+      "fixes": "1",
+      "breaks": "1",
+      "outside_true_pair": "0"
+    },
+    {
+      "base": "reference_101_50d4",
+      "pair": "3_9",
+      "routed": "42",
+      "changed": "0",
+      "correct_before": "38",
+      "correct_after": "38",
+      "fixes": "0",
+      "breaks": "0",
+      "outside_true_pair": "0"
+    },
+    {
+      "base": "reference_101_50d4",
+      "pair": "9_5",
+      "routed": "23",
+      "changed": "2",
+      "correct_before": "21",
+      "correct_after": "19",
+      "fixes": "0",
+      "breaks": "2",
+      "outside_true_pair": "0"
+    }
+  ],
+  "expert_cases": [
+    {
+      "id": "2200.jpg",
+      "true_label": "9",
+      "reference_label": "9",
+      "label": "5",
+      "true_class": "palace",
+      "reference_class": "palace",
+      "predicted_class": "commercial_area",
+      "change": "break",
+      "base": "reference_101_50d4"
+    },
+    {
+      "id": "7548.jpg",
+      "true_label": "3",
+      "reference_label": "3",
+      "label": "5",
+      "true_class": "church",
+      "reference_class": "church",
+      "predicted_class": "commercial_area",
+      "change": "break",
+      "base": "reference_101_50d4"
+    },
+    {
+      "id": "9099.jpg",
+      "true_label": "5",
+      "reference_label": "5",
+      "label": "9",
+      "true_class": "commercial_area",
+      "reference_class": "commercial_area",
+      "predicted_class": "palace",
+      "change": "break",
+      "base": "reference_101_50d4"
+    },
+    {
+      "id": "12684.jpg",
+      "true_label": "3",
+      "reference_label": "5",
+      "label": "3",
+      "true_class": "church",
+      "reference_class": "commercial_area",
+      "predicted_class": "church",
+      "change": "fix",
+      "base": "reference_101_50d4"
+    }
+  ],
+  "specialist_audit_source": {
+    "path": "notebooks/06_tta_ensembles.ipynb",
+    "commit": "8f1ab748fa7fb2813258a25210937d2b2fb4e29c",
+    "cell": 6,
+    "base": "resnet50_partial_domain_shift_stronger_001",
+    "routing": "predicted top-1 group",
+    "not_trained_expert_results": true
+  },
+  "specialist_audit": [
+    {
+      "group": "buildings",
+      "routed_images": "106",
+      "correct_answers_at_risk": "96",
+      "within_group_errors_potentially_fixable": "8",
+      "outside_group_images_need_reject": "2",
+      "group_errors_missed_by_route": "1"
+    },
+    {
+      "group": "water",
+      "routed_images": "69",
+      "correct_answers_at_risk": "66",
+      "within_group_errors_potentially_fixable": "3",
+      "outside_group_images_need_reject": "0",
+      "group_errors_missed_by_route": "1"
+    },
+    {
+      "group": "courts",
+      "routed_images": "67",
+      "correct_answers_at_risk": "65",
+      "within_group_errors_potentially_fixable": "2",
+      "outside_group_images_need_reject": "0",
+      "group_errors_missed_by_route": "3"
+    }
+  ],
+  "water_source": {
+    "path": "docs/resnet101_review_audit.json",
+    "commit": "bd8cbdb61a3353efeeedf82d719f48142d62c5fe",
+    "model": "resnet101_partial_domain_shift_stronger_001",
+    "views": "none",
+    "results": "base-model errors; not expert predictions"
+  },
+  "water_routing_cases": [
+    {
+      "id": "7790.jpg",
+      "true": "wetland",
+      "predicted": "lake",
+      "confidence": 0.88701331615448,
+      "stronger_correct": true,
+      "route_role": "within_group_error"
+    },
+    {
+      "id": "13048.jpg",
+      "true": "lake",
+      "predicted": "wetland",
+      "confidence": 0.9585956335067749,
+      "stronger_correct": false,
+      "route_role": "within_group_error"
+    },
+    {
+      "id": "12223.jpg",
+      "true": "lake",
+      "predicted": "runway",
+      "confidence": 0.5669299364089966,
+      "stronger_correct": true,
+      "route_role": "missed_by_top1_route"
+    },
+    {
+      "id": "8698.jpg",
+      "true": "sea_ice",
+      "predicted": "wetland",
+      "confidence": 0.6921789646148682,
+      "stronger_correct": true,
+      "route_role": "outside_true_group_needs_reject"
+    }
+  ]
+}
